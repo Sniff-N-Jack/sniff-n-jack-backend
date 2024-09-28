@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=sniffnjack'
+      - 'MYSQL_PASSWORD=secret123'
+      - 'MYSQL_ROOT_PASSWORD=verysecret123'
+      - 'MYSQL_USER=master'
+    ports:
+      - '3306:3306'
