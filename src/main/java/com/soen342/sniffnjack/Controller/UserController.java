@@ -1,18 +1,22 @@
 package com.soen342.sniffnjack.Controller;
 
+import com.soen342.sniffnjack.Entity.Role;
 import com.soen342.sniffnjack.Entity.User;
+import com.soen342.sniffnjack.Repository.RoleRepository;
 import com.soen342.sniffnjack.Repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @GetMapping("/all")
     public Iterable<User> getAllUsers() {
@@ -44,29 +48,24 @@ public class UserController {
         return userRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 
-    @PostMapping("/add")
-    public User addUser(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String email) {
-        User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
+    @PostMapping(value = "/add", consumes = "application/json")
+    public User addUser(@RequestBody User user) {
+        user.setEnabled(true);
+        user.setRoles(roleRepository.findAllByNameIsIn(user.getRoles().stream().map(Role::getName).collect(Collectors.toList())));
         return userRepository.save(user);
     }
 
     @DeleteMapping("/delete")
     public void deleteUser(@RequestParam Long id) {
+        System.out.println("Deleting user with id: " + id);
         userRepository.deleteById(id);
     }
 
-    @PatchMapping("/update")
-    public User updateUser(@RequestParam Long id, @RequestParam String firstName, @RequestParam String lastName, @RequestParam String email) {
-        Optional<User> user = userRepository.findById(id);
-        user.ifPresentOrElse(u -> {
-            u.setFirstName(firstName);
-            u.setLastName(lastName);
-            u.setEmail(email);
-            userRepository.save(u);
-        }, null);
-        return user.orElse(null);
+    @PatchMapping("/updatePersonal")
+    public User updateUserPersonalInfo(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String email) {
+        User user = userRepository.findByEmail(email);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        return userRepository.save(user);
     }
 }
