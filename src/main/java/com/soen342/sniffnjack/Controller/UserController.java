@@ -29,22 +29,22 @@ public class UserController {
     }
 
     @GetMapping("/firstName")
-    public Iterable<User> findUserByFirstName(@RequestParam String firstName) {
-        return userRepository.findByFirstName(firstName);
+    public Iterable<User> findUsersByFirstName(@RequestParam String firstName) {
+        return userRepository.findAllByFirstName(firstName);
     }
 
     @GetMapping("/lastName")
-    public Iterable<User> findUserByLastName(@RequestParam String lastName) {
-        return userRepository.findByLastName(lastName);
+    public Iterable<User> findUsersByLastName(@RequestParam String lastName) {
+        return userRepository.findAllByLastName(lastName);
     }
 
     @GetMapping("/fullNameStrict")
-    public Iterable<User> findUserByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
+    public Iterable<User> findUsersByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
         return userRepository.findDistinctByFirstNameAndLastName(firstName, lastName);
     }
 
     @GetMapping("/fullNameLoose")
-    public Iterable<User> findUserByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
+    public Iterable<User> findUsersByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
         return userRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 

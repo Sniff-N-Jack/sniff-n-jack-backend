@@ -1,9 +1,7 @@
 package com.soen342.sniffnjack.Entity;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import java.util.Collection;
 
