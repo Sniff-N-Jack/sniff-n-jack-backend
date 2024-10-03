@@ -60,7 +60,6 @@ public class SetupDataLoader implements ApplicationListener <ContextRefreshedEve
             user.setPassword(passwordEncoder.encode("admin123"));
             user.setEmail(email);
             user.setRoles(Arrays.asList(adminRole));
-            user.setEnabled(true);
             userRepository.save(user);
         }
 

@@ -54,8 +54,7 @@ public class UserController {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException(user.getEmail());
         }
-        user.setEnabled(true);
-        user.setRoles(roleRepository.findAllByNameIsIn(user.getRoles().stream().map(Role::getName).collect(Collectors.toList())));
+        user.setRoles(roleRepository.findAllByNameIsIn(user.getRoles()));
         return userRepository.save(user);
     }
 
