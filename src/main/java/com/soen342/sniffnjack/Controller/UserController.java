@@ -2,6 +2,7 @@ package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Entity.Role;
 import com.soen342.sniffnjack.Entity.User;
+import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
 import com.soen342.sniffnjack.Repository.RoleRepository;
 import com.soen342.sniffnjack.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,10 @@ public class UserController {
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
-    public User addUser(@RequestBody User user) {
+    public User addUser(@RequestBody User user) throws UserAlreadyExistsException {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new UserAlreadyExistsException(user.getEmail());
+        }
         user.setEnabled(true);
         user.setRoles(roleRepository.findAllByNameIsIn(user.getRoles().stream().map(Role::getName).collect(Collectors.toList())));
         return userRepository.save(user);

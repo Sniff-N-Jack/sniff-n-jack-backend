@@ -6,27 +6,22 @@ import com.soen342.sniffnjack.Service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomAuthenticationProvider implements AuthenticationProvider {
-    @Autowired
-    private MyUserDetailsService userDetailsService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
+public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         final String name = authentication.getName();
         final String password = authentication.getCredentials().toString();
-        final UserDetails user = userDetailsService.loadUserByUsername(name);
+        final UserDetails user = getUserDetailsService().loadUserByUsername(name);
+        System.out.println("user: " + user);
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!getPasswordEncoder().matches(password, user.getPassword())) {
             throw new WrongPasswordException();
         }
 

@@ -36,34 +36,17 @@ public class MyUserDetailsService implements UserDetailsService {
         }
 
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(), user.getEnabled(), true, true,
-                true, getAuthorities(user.getRoles()));
+                user.getEmail(), user.getPassword(), user.getEnabled(), true, true, true, getGrantedAuthorities(user.getRoles()));
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(
-            Collection<Role> roles) {
-
-        return getGrantedAuthorities(getPrivileges(roles));
-    }
-
-    private List<String> getPrivileges(Collection<Role> roles) {
-
-        List<String> privileges = new ArrayList<>();
-        List<Privilege> collection = new ArrayList<>();
-        for (Role role : roles) {
-            privileges.add(role.getName());
-            collection.addAll(role.getPrivileges());
-        }
-        for (Privilege item : collection) {
-            privileges.add(item.getName());
-        }
-        return privileges;
-    }
-
-    private List<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
+    private List<GrantedAuthority> getGrantedAuthorities(Collection<Role> roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String privilege : privileges) {
-            authorities.add(new SimpleGrantedAuthority(privilege));
+        for (Role role : roles) {
+            for (Privilege privilege : role.getPrivileges()) {
+                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(privilege.getName());
+                if (!authorities.contains(simpleGrantedAuthority)) authorities.add(simpleGrantedAuthority);
+            }
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         }
         return authorities;
     }

@@ -1,10 +1,10 @@
 package com.soen342.sniffnjack.Configuration;
 
+import com.soen342.sniffnjack.Service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class BasicAuthSecurity {
     @Autowired
-    private CustomAuthenticationProvider authProvider;
+    private MyUserDetailsService myUserDetailsService;
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -24,7 +24,16 @@ public class BasicAuthSecurity {
     }
 
     @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        CustomAuthenticationProvider customAuthenticationProvider = new CustomAuthenticationProvider();
+        customAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        customAuthenticationProvider.setUserDetailsService(myUserDetailsService);
+        return customAuthenticationProvider;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.httpBasic(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests ->
             requests.requestMatchers("/users/add").permitAll()
@@ -33,7 +42,6 @@ public class BasicAuthSecurity {
                     ).hasRole("ADMIN")
                     .anyRequest().authenticated()
         );
-        http.authenticationProvider(authProvider);
 
         return http.build();
     }

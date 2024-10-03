@@ -11,4 +11,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     List<User> findAllByLastName(String lastName);
     List<User> findDistinctByFirstNameAndLastName(String firstName, String lastName);
     List<User> findDistinctByFirstNameOrLastName(String firstName, String lastName);
+
+    boolean existsByEmail(String email);
 }
