@@ -15,44 +15,44 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    private Long id;
+@Id
+@GeneratedValue(strategy = GenerationType.AUTO)
+@Getter
+private Long id;
 
-    @NonNull
-    @Getter
-    @Setter
-    private String firstName;
+@NonNull
+@Getter
+@Setter
+private String firstName;
 
-    @NonNull
-    @Getter
-    @Setter
-    private String lastName;
+@NonNull
+@Getter
+@Setter
+private String lastName;
 
-    @NonNull
-    @Column(unique = true)
-    @Getter
-    @Setter
-    private String email;
+@NonNull
+@Column(unique = true)
+@Getter
+@Setter
+private String email;
 
-    @NonNull
-    @Getter
-    @Setter
-    private String password;
+@NonNull
+@Getter
+@Setter
+private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}))
-    @Setter
-    private Collection<Role> roles;
+@ManyToMany(fetch = FetchType.EAGER)
+@JoinTable(
+        name = "users_roles",
+        joinColumns = @JoinColumn(
+                name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(
+                name = "role_id", referencedColumnName = "id"),
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}))
+@Setter
+private Collection<Role> roles;
 
-    public Collection<String> getRoles() {
+public Collection<String> getRoles() {
         return roles.stream().map(Role::getName).collect(Collectors.toList());
-    }
+}
 }
