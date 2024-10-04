@@ -1,14 +1,8 @@
 package com.soen342.sniffnjack.Configuration;
 
 import com.soen342.sniffnjack.Service.MyUserDetailsService;
-import org.hibernate.boot.model.relational.Database;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,8 +11,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +22,21 @@ public class BasicAuthSecurity {
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
+//        return new BCryptPasswordEncoder() {
+//            @Override
+//            public boolean matches(CharSequence given, String stored) {
+//                String decrypted;
+//                try {
+//                    byte[] bytes = decrypt(System.getenv("AES_KEY").getBytes(), KU_AP_REQ_AUTHENTICATOR, System.getenv("AES_IV").getBytes(), given.toString().getBytes(), 0, given.length());
+//                    decrypted = new String(bytes);
+//                } catch (Exception e) {
+//                    System.out.println("Error decrypting password");
+//                    return false;
+//                }
+//                return super.matches(decrypted, stored);
+//            }
+//        };
+        return new BCryptPasswordEncoder(); // TODO: Decrypt password
     }
 
     @Bean

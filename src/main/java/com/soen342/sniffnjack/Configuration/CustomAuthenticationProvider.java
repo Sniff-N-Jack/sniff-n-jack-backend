@@ -21,7 +21,6 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
         final UserDetails user = getUserDetailsService().loadUserByUsername(name);
 
         if (!passwordEncoder().matches(password, user.getPassword())) {
-            // TODO: Why is it always going here?
             throw new WrongPasswordException();
         }
 
