@@ -52,8 +52,10 @@ public class BasicAuthSecurity {
         http.httpBasic(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests ->
-            requests.requestMatchers("/users/add").permitAll()
-                    .requestMatchers("/users/all").permitAll()
+            requests.requestMatchers(
+                    "/users/add",
+                    "/users/all"
+                    ).permitAll()
                     .requestMatchers(
                             "/users/delete"
                     ).hasRole("ADMIN")
