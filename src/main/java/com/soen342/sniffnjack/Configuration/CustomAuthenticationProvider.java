@@ -1,6 +1,5 @@
 package com.soen342.sniffnjack.Configuration;
 
-import com.soen342.sniffnjack.Exceptions.UserDisabledException;
 import com.soen342.sniffnjack.Exceptions.WrongPasswordException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,14 +1,12 @@
 package com.soen342.sniffnjack.Controller;
 
-import com.soen342.sniffnjack.Entity.Role;
 import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
+import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
 import com.soen342.sniffnjack.Repository.RoleRepository;
 import com.soen342.sniffnjack.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -25,8 +23,12 @@ public class UserController {
     }
 
     @GetMapping("/email")
-    public User findUserByEmail(@RequestParam String email) {
-        return userRepository.findByEmail(email);
+    public User findUserByEmail(@RequestParam String email) throws UserNotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new UserNotFoundException(email);
+        }
+        return user;
     }
 
     @GetMapping("/firstName")
@@ -60,7 +62,6 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public void deleteUser(@RequestParam Long id) {
-        System.out.println("Deleting user with id: " + id);
         userRepository.deleteById(id);
     }
 
