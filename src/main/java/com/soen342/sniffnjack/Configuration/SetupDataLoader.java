@@ -1,8 +1,10 @@
 package com.soen342.sniffnjack.Configuration;
 
+import com.soen342.sniffnjack.Entity.Admin;
 import com.soen342.sniffnjack.Entity.Privilege;
 import com.soen342.sniffnjack.Entity.Role;
 import com.soen342.sniffnjack.Entity.User;
+import com.soen342.sniffnjack.Repository.AdminRepository;
 import com.soen342.sniffnjack.Repository.PrivilegeRepository;
 import com.soen342.sniffnjack.Repository.RoleRepository;
 import com.soen342.sniffnjack.Repository.UserRepository;
@@ -23,7 +25,7 @@ public class SetupDataLoader implements ApplicationListener <ContextRefreshedEve
     boolean alreadySetup = false;
 
     @Autowired
-    private UserRepository userRepository;
+    private AdminRepository adminRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -53,14 +55,14 @@ public class SetupDataLoader implements ApplicationListener <ContextRefreshedEve
 
         String email = "admin@test.com";
 
-        if(userRepository.findByEmail(email) == null) {
-            User user = new User();
+        if(adminRepository.findByEmail(email) == null) {
+            User user = new Admin();
             user.setFirstName("Admin-First");
             user.setLastName("Admin-Last");
             user.setPassword(passwordEncoder.encode("admin123"));
             user.setEmail(email);
-            user.setRoles(Arrays.asList(adminRole));
-            userRepository.save(user);
+            user.setRole(adminRole);
+            adminRepository.save(user);
         }
 
         alreadySetup = true;

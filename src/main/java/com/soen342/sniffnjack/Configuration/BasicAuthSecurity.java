@@ -53,11 +53,19 @@ public class BasicAuthSecurity {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests ->
             requests.requestMatchers(
-                    "/users/add",
-                    "/users/all"
+                    "/clients/add",
+                    "/takenOfferings/all",
+                    "/takenOfferings/get"
                     ).permitAll()
                     .requestMatchers(
-                            "/users/delete"
+                            "/clients/updatePersonal",
+                            "/clients/addParent",
+                            "/clients/removeParent"
+                    ).hasRole("CLIENT")
+                    .requestMatchers(
+                            "/users/delete",
+                            "/admins/add",
+                            "/admins/updatePersonal"
                     ).hasRole("ADMIN")
                     .anyRequest().authenticated()
         );

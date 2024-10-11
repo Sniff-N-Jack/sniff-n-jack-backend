@@ -22,7 +22,7 @@ public class Role {
     @Setter
     private String name;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
     @Setter
     private Collection<User> users;
 

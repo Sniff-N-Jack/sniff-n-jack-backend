@@ -1,47 +1,41 @@
 package com.soen342.sniffnjack.Entity;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter
-    private Long id;
+    protected Long id;
 
     @NonNull
     @Getter
     @Setter
-    private String firstName;
+    protected String firstName;
 
     @NonNull
     @Getter
     @Setter
-    private String lastName;
+    protected String lastName;
 
     @NonNull
     @Column(unique = true)
     @Getter
     @Setter
-    private String email;
+    protected String email;
 
     @NonNull
     @Getter
     @Setter
-    private String password;
+    protected String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(
@@ -50,9 +44,17 @@ public class User {
                     name = "role_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}))
     @Setter
-    private Collection<Role> roles;
+    protected Role role;
 
-    public Collection<String> getRoles() {
-        return roles.stream().map(Role::getName).collect(Collectors.toList());
+    public String getRole() {
+        return role.getName();
+    }
+
+    public User(String email, String password, String firstName, String lastName, Role role) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
     }
 }

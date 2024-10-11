@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,18 +38,23 @@ public class MyUserDetailsService implements UserDetailsService {
         }
 
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(), true, true, true, true, getGrantedAuthorities(user.getRoles()));
+                user.getEmail(),
+                user.getPassword(),
+                true,
+                true,
+                true,
+                true,
+                getGrantedAuthorities(user.getRole())
+        );
     }
 
-    private List<GrantedAuthority> getGrantedAuthorities(Collection<String> roles) {
+    private List<GrantedAuthority> getGrantedAuthorities(String role) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : roleRepository.findAllByNameIsIn(roles)) {
-            for (String privilege : role.getPrivileges()) {
-                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(privilege);
-                if (!authorities.contains(simpleGrantedAuthority)) authorities.add(simpleGrantedAuthority);
-            }
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+        for (String privilege : roleRepository.findByName(role).getPrivileges()) {
+            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(privilege);
+            if (!authorities.contains(simpleGrantedAuthority)) authorities.add(simpleGrantedAuthority);
         }
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
         return authorities;
     }
 }

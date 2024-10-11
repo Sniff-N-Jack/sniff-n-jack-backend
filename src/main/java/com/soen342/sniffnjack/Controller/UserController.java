@@ -1,10 +1,10 @@
 package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Entity.User;
-import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
 import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
 import com.soen342.sniffnjack.Repository.RoleRepository;
 import com.soen342.sniffnjack.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,19 +15,20 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    protected RoleRepository roleRepository;
 
     @GetMapping("/all")
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    @GetMapping("/email")
+    @GetMapping("/get")
     public User findUserByEmail(@RequestParam String email) throws UserNotFoundException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new UserNotFoundException(email);
         }
+
         return user;
     }
 
@@ -51,25 +52,12 @@ public class UserController {
         return userRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 
-    @PostMapping(value = "/add", consumes = "application/json")
-    public User addUser(@RequestBody User user) throws UserAlreadyExistsException {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new UserAlreadyExistsException(user.getEmail());
-        }
-        user.setRoles(roleRepository.findAllByNameIsIn(user.getRoles()));
-        return userRepository.save(user);
-    }
-
     @DeleteMapping("/delete")
-    public void deleteUser(@RequestParam Long id) {
-        userRepository.deleteById(id);
-    }
-
-    @PatchMapping("/updatePersonal")
-    public User updateUserPersonalInfo(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String email) {
-        User user = userRepository.findByEmail(email);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        return userRepository.save(user);
+    @Transactional
+    public void deleteClient(@RequestParam String email) throws UserNotFoundException {
+        if (!userRepository.existsByEmail(email)) {
+            throw new UserNotFoundException(email);
+        }
+        userRepository.deleteByEmail(email);
     }
 }
