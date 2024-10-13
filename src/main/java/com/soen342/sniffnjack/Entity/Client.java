@@ -27,7 +27,6 @@ public class Client extends User {
     private Client parent;
 
     @Setter
-    @Nullable
     @OneToMany(mappedBy = "parent",  fetch = FetchType.EAGER)
     private Collection<Client> children;
 

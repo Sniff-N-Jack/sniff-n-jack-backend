@@ -14,9 +14,6 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    protected RoleRepository roleRepository;
-
     @GetMapping("/all")
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
@@ -54,7 +51,7 @@ public class UserController {
 
     @DeleteMapping("/delete")
     @Transactional
-    public void deleteClient(@RequestParam String email) throws UserNotFoundException {
+    public void deleteUser(@RequestParam String email) throws UserNotFoundException {
         if (!userRepository.existsByEmail(email)) {
             throw new UserNotFoundException(email);
         }

@@ -47,22 +47,22 @@ public class ClientController {
     }
 
     @GetMapping("/firstName")
-    public Iterable<Client> findUsersByFirstName(@RequestParam String firstName) {
+    public Iterable<Client> findClientsByFirstName(@RequestParam String firstName) {
         return clientRepository.findAllByFirstName(firstName);
     }
 
     @GetMapping("/lastName")
-    public Iterable<Client> findUsersByLastName(@RequestParam String lastName) {
+    public Iterable<Client> findClientsByLastName(@RequestParam String lastName) {
         return clientRepository.findAllByLastName(lastName);
     }
 
     @GetMapping("/fullNameStrict")
-    public Iterable<Client> findUsersByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
+    public Iterable<Client> findClientsByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
         return clientRepository.findDistinctByFirstNameAndLastName(firstName, lastName);
     }
 
     @GetMapping("/fullNameLoose")
-    public Iterable<Client> findUsersByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
+    public Iterable<Client> findClientsByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
         return clientRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 

@@ -56,6 +56,7 @@ public class BasicAuthSecurity {
                     "/v3/**",
                     "/swagger-ui/**",
                     "/clients/add",
+                    "/instructions/add",
                     "/takenOfferings/all",
                     "/takenOfferings/get"
                     ).permitAll()
@@ -69,6 +70,11 @@ public class BasicAuthSecurity {
                             "/admins/add",
                             "/admins/updatePersonal"
                     ).hasRole("ADMIN")
+                    .requestMatchers(
+                            "/instructors/specialization",
+                            "/instructors/availability",
+                            "/instructors/updatePersonal"
+                    ).hasRole("INSTRUCTOR")
                     .anyRequest().authenticated()
         );
         http.sessionManagement(sessionManagement ->
