@@ -53,6 +53,8 @@ public class BasicAuthSecurity {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests ->
             requests.requestMatchers(
+                    "/v3/**",
+                    "/swagger-ui/**",
                     "/clients/add",
                     "/takenOfferings/all",
                     "/takenOfferings/get"
