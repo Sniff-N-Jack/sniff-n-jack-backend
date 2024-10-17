@@ -6,23 +6,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Data
-@NoArgsConstructor
-public class Timeslot {
-    @NonNull
-    private LocalTime startTime;
-
-    @NonNull
-    private LocalTime endTime;
-
-    @NonNull
-    private DayOfWeek day;
-
-    public Timeslot(@NonNull LocalTime startTime, @NonNull LocalTime endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
+public record Timeslot(@NonNull LocalTime startTime, @NonNull LocalTime endTime, @NonNull DayOfWeek day) {
     public boolean overlaps(Timeslot other) {
         return this.startTime.isBefore(other.endTime) && other.startTime.isBefore(this.endTime) && this.day.equals(other.day);
     }

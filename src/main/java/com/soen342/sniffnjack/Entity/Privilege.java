@@ -25,15 +25,7 @@ public class Privilege {
     @Setter
     private String name;
 
-    @DocumentReference
-    @Setter
-    private Collection<Role> roles;
-
     public Privilege(String name) {
         this.name = name;
-    }
-
-    public Collection<String> getRoles() {
-        return roles.stream().map(Role::getName).collect(Collectors.toList());
     }
 }

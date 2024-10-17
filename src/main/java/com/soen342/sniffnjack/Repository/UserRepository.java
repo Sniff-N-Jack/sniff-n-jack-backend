@@ -11,6 +11,7 @@ public interface UserRepository<T extends User> extends MongoRepository<User, Lo
     List<T> findAllByLastName(String lastName);
     List<T> findDistinctByFirstNameAndLastName(String firstName, String lastName);
     List<T> findDistinctByFirstNameOrLastName(String firstName, String lastName);
+    List<T> findByRole(String role);
 
     boolean existsByEmail(String email);
 

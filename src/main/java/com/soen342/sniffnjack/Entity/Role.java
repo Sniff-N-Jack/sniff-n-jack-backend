@@ -27,18 +27,10 @@ public class Role {
 
     @DocumentReference
     @Setter
-    private Collection<User> users;
-
-    @DocumentReference
-    @Setter
     private Collection<Privilege> privileges;
 
-    public Role(String name) {
+    public Role(@NonNull String name) {
         this.name = name;
-    }
-
-    public Collection<String> getUsers() {
-        return users.stream().map(User::getEmail).collect(Collectors.toList());
     }
 
     public Collection<String> getPrivileges() {
