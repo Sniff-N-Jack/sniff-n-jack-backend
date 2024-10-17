@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -21,12 +23,15 @@ public class Timeslot {
     private Long id;
 
     @NonNull
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
     @NonNull
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
-    public Timeslot(@NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime) {
+    @NonNull
+    private DayOfWeek day;
+
+    public Timeslot(@NonNull LocalTime startTime, @NonNull LocalTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -36,8 +41,8 @@ public class Timeslot {
     }
 
     public boolean contains(Timeslot other) {
-        return (this.startTime.isBefore(other.startTime) || this.startTime.isEqual(other.startTime))
-                && (this.endTime.isAfter(other.endTime) || this.endTime.isEqual(other.endTime));
+        return (this.startTime.isBefore(other.startTime) || this.startTime.equals(other.startTime))
+                && (this.endTime.isAfter(other.endTime) || this.endTime.equals(other.endTime));
     }
 
     public boolean equals(Timeslot other) {

@@ -1,20 +1,21 @@
 package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Configuration.BasicAuthSecurity;
-import com.soen342.sniffnjack.Entity.Activity;
 import com.soen342.sniffnjack.Entity.Instructor;
 import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
 import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
 import com.soen342.sniffnjack.Repository.ActivityRepository;
-import com.soen342.sniffnjack.Repository.InstructorsRepository;
+import com.soen342.sniffnjack.Repository.InstructorRepository;
 import com.soen342.sniffnjack.Repository.RoleRepository;
 import com.soen342.sniffnjack.Utils.Timeslot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/instructors")
 public class InstructorController {
     @Autowired
-    private InstructorsRepository instructorRepository;
+    private InstructorRepository instructorRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -67,18 +68,16 @@ public class InstructorController {
 
     @GetMapping("/specialization")
     public Iterable<Instructor> findInstructorsBySpecialization(@RequestParam String specialization) {
-        return instructorRepository.findAllByActivity(specialization);
+        return instructorRepository.findAllBySpecialization(specialization);
     }
 
     @GetMapping("/availability")
-    public Iterable<Instructor> findInstructorsByAvailability(@RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime) {
-        Timeslot availability = new Timeslot(startTime, endTime);
+    public Iterable<Instructor> findInstructorsByAvailability(@RequestParam Timeslot availability) {
         return instructorRepository.findAllByAvailability(availability);
     }
 
     @GetMapping("/availabilityAndSpecialization")
-    public Iterable<Instructor> findInstructorsByAvailabilityAndSpecialization(@RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime, @RequestParam String specialization) {
-        Timeslot availability = new Timeslot(startTime, endTime);
+    public Iterable<Instructor> findInstructorsByAvailabilityAndSpecialization(@RequestParam Timeslot availability, @RequestParam String specialization) {
         return instructorRepository.findAllByAvailabilityAndActivity(availability, specialization);
     }
 
