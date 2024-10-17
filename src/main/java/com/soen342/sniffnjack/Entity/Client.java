@@ -1,14 +1,15 @@
 package com.soen342.sniffnjack.Entity;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@Entity
+@Document
 public class Client extends User {
     @Getter
     @Setter
@@ -16,18 +17,11 @@ public class Client extends User {
 
     @Setter
     @Nullable
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "parents_children",
-            joinColumns = @JoinColumn(
-                    name = "child_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "parent_id", referencedColumnName = "id"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"child_id", "parent_id"}))
+    @DocumentReference
     private Client parent;
 
     @Setter
-    @OneToMany(mappedBy = "parent",  fetch = FetchType.EAGER)
+    @DocumentReference
     private Collection<Client> children;
 
     public String getParent() {

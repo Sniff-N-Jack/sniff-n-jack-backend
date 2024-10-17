@@ -1,21 +1,20 @@
 package com.soen342.sniffnjack.Entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.soen342.sniffnjack.Utils.IdMaker;
+import lombok.*;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-@Entity
+@Document
 @NoArgsConstructor
 @AllArgsConstructor
 public class Activity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @MongoId
     @Getter
-    protected Long id;
+    protected Long id = IdMaker.getId();
 
-    @Column(nullable = false, unique = true)
+    @Indexed(unique = true)
     @Getter
     @Setter
     protected String name;

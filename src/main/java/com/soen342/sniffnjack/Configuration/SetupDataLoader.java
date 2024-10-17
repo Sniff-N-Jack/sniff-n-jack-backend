@@ -7,14 +7,12 @@ import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Repository.AdminRepository;
 import com.soen342.sniffnjack.Repository.PrivilegeRepository;
 import com.soen342.sniffnjack.Repository.RoleRepository;
-import com.soen342.sniffnjack.Repository.UserRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collection;

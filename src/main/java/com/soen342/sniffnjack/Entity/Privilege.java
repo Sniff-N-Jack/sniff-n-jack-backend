@@ -1,30 +1,31 @@
 package com.soen342.sniffnjack.Entity;
 
-import jakarta.persistence.*;
+import com.soen342.sniffnjack.Utils.IdMaker;
 import lombok.*;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@Entity
+@Document
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Privilege {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @MongoId
     @Getter
-    private Long id;
+    private Long id = IdMaker.getId();
 
     @NonNull
-    @Column(unique = true)
+    @Indexed(unique = true)
     @Getter
     @Setter
     private String name;
 
-    @ManyToMany(mappedBy = "privileges", fetch = FetchType.EAGER)
+    @DocumentReference
     @Setter
     private Collection<Role> roles;
 

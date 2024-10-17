@@ -2,9 +2,7 @@ package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
-import com.soen342.sniffnjack.Repository.RoleRepository;
 import com.soen342.sniffnjack.Repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +48,6 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    @Transactional
     public void deleteUser(@RequestParam String email) throws UserNotFoundException {
         if (!userRepository.existsByEmail(email)) {
             throw new UserNotFoundException(email);

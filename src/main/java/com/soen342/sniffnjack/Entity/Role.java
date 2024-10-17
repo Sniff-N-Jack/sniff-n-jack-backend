@@ -1,39 +1,35 @@
 package com.soen342.sniffnjack.Entity;
 
-import jakarta.persistence.*;
+import com.soen342.sniffnjack.Utils.IdMaker;
 import lombok.*;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@Entity
+@Document
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-    @Id
+    @MongoId
     @Getter
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long id = IdMaker.getId();
 
-    @Column(unique = true, nullable = false)
+    @NonNull
+    @Indexed(unique = true)
     @Getter
     @Setter
     private String name;
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
+    @DocumentReference
     @Setter
     private Collection<User> users;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "roles_privileges",
-            joinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "privilege_id", referencedColumnName = "id"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"role_id", "privilege_id"}))
+    @DocumentReference
     @Setter
     private Collection<Privilege> privileges;
 

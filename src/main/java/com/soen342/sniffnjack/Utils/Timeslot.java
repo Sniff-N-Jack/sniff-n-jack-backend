@@ -1,27 +1,14 @@
 package com.soen342.sniffnjack.Utils;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class Timeslot {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
     @NonNull
     private LocalTime startTime;
 
@@ -37,15 +24,16 @@ public class Timeslot {
     }
 
     public boolean overlaps(Timeslot other) {
-        return this.startTime.isBefore(other.endTime) && other.startTime.isBefore(this.endTime);
+        return this.startTime.isBefore(other.endTime) && other.startTime.isBefore(this.endTime) && this.day.equals(other.day);
     }
 
     public boolean contains(Timeslot other) {
         return (this.startTime.isBefore(other.startTime) || this.startTime.equals(other.startTime))
-                && (this.endTime.isAfter(other.endTime) || this.endTime.equals(other.endTime));
+                && (this.endTime.isAfter(other.endTime) || this.endTime.equals(other.endTime))
+                && this.day.equals(other.day);
     }
 
     public boolean equals(Timeslot other) {
-        return this.startTime.equals(other.startTime) && this.endTime.equals(other.endTime);
+        return this.startTime.equals(other.startTime) && this.endTime.equals(other.endTime) && this.day.equals(other.day);
     }
 }

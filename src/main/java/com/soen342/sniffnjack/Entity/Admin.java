@@ -1,8 +1,8 @@
 package com.soen342.sniffnjack.Entity;
 
-import jakarta.persistence.Entity;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document
 public class Admin extends User {
     public Admin() {
         super();

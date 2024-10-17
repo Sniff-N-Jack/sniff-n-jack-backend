@@ -1,18 +1,19 @@
 package com.soen342.sniffnjack.Entity;
 
-import jakarta.persistence.*;
+import com.soen342.sniffnjack.Utils.IdMaker;
 import lombok.*;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Entity
+@Document
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @MongoId
     @Getter
-    protected Long id;
+    protected Long id = IdMaker.getId();
 
     @NonNull
     @Getter
@@ -25,7 +26,7 @@ public abstract class User {
     protected String lastName;
 
     @NonNull
-    @Column(unique = true)
+    @Indexed(unique = true)
     @Getter
     @Setter
     protected String email;
@@ -35,26 +36,12 @@ public abstract class User {
     @Setter
     protected String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}))
+    @NonNull
+    @DocumentReference
     @Setter
     protected Role role;
 
     public String getRole() {
         return role.getName();
-    }
-
-    public User(String email, String password, String firstName, String lastName, Role role) {
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.role = role;
     }
 }
