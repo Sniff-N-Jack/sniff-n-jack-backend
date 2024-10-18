@@ -1,5 +1,6 @@
 package com.soen342.sniffnjack.Service;
 
+import com.soen342.sniffnjack.Entity.Privilege;
 import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Repository.RoleRepository;
 import com.soen342.sniffnjack.Repository.UserRepository;
@@ -40,14 +41,14 @@ public class MyUserDetailsService implements UserDetailsService {
                 true,
                 true,
                 true,
-                getGrantedAuthorities(user.getRole())
+                getGrantedAuthorities(user.getRole().getName())
         );
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(String role) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String privilege : roleRepository.findByName(role).getPrivileges()) {
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(privilege);
+        for (Privilege privilege : roleRepository.findByName(role).getPrivileges()) {
+            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(privilege.getName());
             if (!authorities.contains(simpleGrantedAuthority)) authorities.add(simpleGrantedAuthority);
         }
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role));

@@ -85,7 +85,7 @@ public class ClientController {
             if (parent == null) {
                 throw new UserNotFoundException(user.getParent().getEmail());
             }
-            checkParent(parent.getEmail(), parent.getRole());
+            checkParent(parent.getEmail(), parent.getRole().getName());
             user.setParent((Client) parent);
         }
         return clientRepository.save(user);
@@ -107,7 +107,7 @@ public class ClientController {
         if (parent == null) {
             throw new UserNotFoundException(email);
         }
-        checkParent(email, parent.getRole());
+        checkParent(email, parent.getRole().getName());
         child.setParent((Client) parent);
         return clientRepository.save(child);
     }

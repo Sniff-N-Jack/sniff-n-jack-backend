@@ -12,20 +12,19 @@ import java.util.stream.Collectors;
 
 @Document
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Privilege {
     @MongoId
-    @Getter
     private Long id = IdMaker.getId();
 
     @NonNull
     @Indexed(unique = true)
-    @Getter
     @Setter
     private String name;
 
-    public Privilege(String name) {
+    public Privilege(@NonNull String name) {
         this.name = name;
     }
 }

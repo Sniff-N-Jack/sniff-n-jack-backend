@@ -10,23 +10,18 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 @Document(collection = "user")
 @BsonDiscriminator(key = "type", value = "Instructor")
 public class Instructor extends User {
-    @Getter
-    @Setter
     private Collection<Timeslot> availabilities;
 
     @DocumentReference
-    @Setter
     private Collection<Activity> specializations;
 
     public Instructor() {
         super();
         role = new Role("INSTRUCTOR");
-    }
-
-    public Collection<String> getSpecializations() {
-        return specializations.stream().map(Activity::getName).collect(Collectors.toList());
     }
 }

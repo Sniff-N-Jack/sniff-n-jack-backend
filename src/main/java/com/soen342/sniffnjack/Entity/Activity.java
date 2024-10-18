@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Document
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Activity {
@@ -15,11 +16,11 @@ public class Activity {
     protected Long id = IdMaker.getId();
 
     @Indexed(unique = true)
-    @Getter
     @Setter
+    @NonNull
     protected String name;
 
-    public Activity(String name) {
+    public Activity(@NonNull String name) {
         this.name = name;
     }
 }

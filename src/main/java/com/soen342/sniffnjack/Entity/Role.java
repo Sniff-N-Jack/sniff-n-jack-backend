@@ -12,16 +12,15 @@ import java.util.stream.Collectors;
 
 @Document
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
     @MongoId
-    @Getter
     private Long id = IdMaker.getId();
 
     @NonNull
     @Indexed(unique = true)
-    @Getter
     @Setter
     private String name;
 
@@ -31,9 +30,5 @@ public class Role {
 
     public Role(@NonNull String name) {
         this.name = name;
-    }
-
-    public Collection<String> getPrivileges() {
-        return privileges.stream().map(Privilege::getName).collect(Collectors.toList());
     }
 }

@@ -8,15 +8,13 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+@Getter
+@Setter
 @Document(collection = "user")
 @BsonDiscriminator(key = "type", value = "Client")
 public class Client extends User {
-    @Getter
-    @Setter
     private int age;
 
-    @Getter
-    @Setter
     @Nullable
     @DocumentReference
     private Client parent;

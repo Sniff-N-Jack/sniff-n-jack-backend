@@ -53,12 +53,15 @@ public class BasicAuthSecurity {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests ->
             requests.requestMatchers(
-                    "/v3/**",
-                    "/swagger-ui/**",
-                    "/clients/add",
-                    "/instructions/add",
-                    "/takenOfferings/all",
-                    "/takenOfferings/get"
+                            "/v3/**",
+                            "/swagger-ui/**",
+                            "/clients/add",
+                            "/instructions/add",
+                            "/takenOfferings/all",
+                            "/takenOfferings/get",
+                            "/activities/all",
+                            "/instructors/all",
+                            "/instructors/specialization"
                     ).permitAll()
                     .requestMatchers(
                             "/clients/updatePersonal",
@@ -68,11 +71,11 @@ public class BasicAuthSecurity {
                     .requestMatchers(
                             "/users/delete",
                             "/admins/add",
-                            "/admins/updatePersonal"
+                            "/admins/updatePersonal",
+                            "activities/**",
+                            "/instructors/availability"
                     ).hasRole("ADMIN")
                     .requestMatchers(
-                            "/instructors/specialization",
-                            "/instructors/availability",
                             "/instructors/updatePersonal"
                     ).hasRole("INSTRUCTOR")
                     .anyRequest().authenticated()

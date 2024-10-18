@@ -1,6 +1,7 @@
 package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Configuration.BasicAuthSecurity;
+import com.soen342.sniffnjack.Entity.Activity;
 import com.soen342.sniffnjack.Entity.Instructor;
 import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
@@ -68,17 +69,12 @@ public class InstructorController {
 
     @GetMapping("/specialization")
     public Iterable<Instructor> findInstructorsBySpecialization(@RequestParam String specialization) {
-        return instructorRepository.findAllBySpecialization(specialization);
+        return instructorRepository.findAllBySpecialization(activityRepository.findByName(specialization).getId());
     }
 
     @GetMapping("/availability")
-    public Iterable<Instructor> findInstructorsByAvailability(@RequestParam Timeslot availability) {
+    public Iterable<Instructor> findInstructorsByAvailability(@RequestBody Timeslot availability) {
         return instructorRepository.findAllByAvailability(availability);
-    }
-
-    @GetMapping("/availabilityAndSpecialization")
-    public Iterable<Instructor> findInstructorsByAvailabilityAndSpecialization(@RequestParam Timeslot availability, @RequestParam String specialization) {
-        return instructorRepository.findAllByAvailabilityAndActivity(availability, specialization);
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
@@ -89,7 +85,7 @@ public class InstructorController {
         user.setRole(roleRepository.findByName("INSTRUCTOR"));
         user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
         if (user.getSpecializations() != null) {
-            user.setSpecializations(user.getSpecializations().stream().map(activityRepository::findByName).collect(Collectors.toList()));
+            user.setSpecializations(activityRepository.findDistinctByNameIn(user.getSpecializations().stream().map(Activity::getName).toList()));
         }
         if (user.getAvailabilities() != null) {
             user.setAvailabilities(user.getAvailabilities().stream().toList());
