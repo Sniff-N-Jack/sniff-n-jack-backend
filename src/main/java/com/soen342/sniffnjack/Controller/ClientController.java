@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -72,15 +73,18 @@ public class ClientController {
             throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setRole(roleRepository.findByName("CLIENT"));
+        user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
         if (user.getParent() != null) {
-            User parent = userRepository.findByEmail(user.getParent());
-            if (parent == null) {
+            User possibleParent = userRepository.findByEmail(user.getParent());
+            if (possibleParent == null) {
                 throw new UserNotFoundException(user.getParent());
             }
-            checkParent(parent.getEmail(), parent.getRole());
-            user.setParent(clientRepository.findByEmail(user.getParent()));
+            checkParent(possibleParent.getEmail(), possibleParent.getRole());
+            Client parent = clientRepository.findByEmail(user.getParent());
+            user.setParent(parent);
+            parent.addChild(user);
+            clientRepository.save(parent);
         }
-        user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
         return clientRepository.save(user);
     }
 
@@ -96,20 +100,28 @@ public class ClientController {
     @PatchMapping("/addParent")
     public Client addParent(@RequestParam String email) throws UserNotFoundException, InvalidRoleException, InvalidParentCandidateException {
         Client child = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        User parent = userRepository.findByEmail(email);
-        if (parent == null) {
+        User possibleParent = userRepository.findByEmail(email);
+        if (possibleParent == null) {
             throw new UserNotFoundException(email);
         }
-        checkParent(email, parent.getRole());
-        child.setParent(clientRepository.findByEmail(email));
-
+        checkParent(email, possibleParent.getRole());
+        Client parent = clientRepository.findByEmail(email);
+        child.setParent(parent);
+        parent.addChild(child);
+        clientRepository.save(parent);
         return clientRepository.save(child);
     }
 
     @PatchMapping("/removeParent")
     public Client removeParent() {
         Client child = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Client parent = clientRepository.findByEmail(child.getParent());
+        if (parent == null) {
+            return child;
+        }
+        parent.removeChild(child);
         child.setParent(null);
+        clientRepository.save(parent);
         return clientRepository.save(child);
     }
 }
