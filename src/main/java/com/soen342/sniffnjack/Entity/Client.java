@@ -1,46 +1,22 @@
 package com.soen342.sniffnjack.Entity;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-@Entity
+@Getter
+@Setter
+@Document(collection = "user")
+@BsonDiscriminator(key = "type", value = "Client")
 public class Client extends User {
-    @Getter
-    @Setter
     private int age;
 
-    @Setter
     @Nullable
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "parents_children",
-            joinColumns = @JoinColumn(
-                    name = "child_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "parent_id", referencedColumnName = "id"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"child_id", "parent_id"}))
+    @DocumentReference
     private Client parent;
-
-    @Setter
-    @Nullable
-    @OneToMany(mappedBy = "parent",  fetch = FetchType.EAGER)
-    private Collection<Client> children;
-
-    public String getParent() {
-        if (parent == null) {
-            return null;
-        }
-        return parent.getEmail();
-    }
-
-    public Collection<String> getChildren() {
-        return children.stream().map(Client::getEmail).collect(Collectors.toList());
-    }
 
     public Client() {
         super();
@@ -51,5 +27,15 @@ public class Client extends User {
         super();
         role = new Role("CLIENT");
         this.email = email;
+    }
+
+    public Client(String firstName, String lastName, String email, String password, int age, @Nullable Client parent) {
+        super(firstName, lastName, email, password);
+        if (age < 18 && parent == null) {
+            throw new IllegalArgumentException("Client under 18 must have a parent");
+        }
+        this.age = age;
+        this.parent = parent;
+        role = new Role("CLIENT");
     }
 }

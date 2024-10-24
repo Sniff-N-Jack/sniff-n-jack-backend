@@ -1,60 +1,46 @@
 package com.soen342.sniffnjack.Entity;
 
-import jakarta.persistence.*;
+import com.soen342.sniffnjack.Utils.IdMaker;
 import lombok.*;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Entity
+@Document
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    protected Long id;
+    @MongoId
+    protected Long id = IdMaker.getId();
 
     @NonNull
-    @Getter
     @Setter
     protected String firstName;
 
     @NonNull
-    @Getter
     @Setter
     protected String lastName;
 
     @NonNull
-    @Column(unique = true)
-    @Getter
+    @Indexed(unique = true)
     @Setter
     protected String email;
 
     @NonNull
-    @Getter
     @Setter
     protected String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}))
+    @NonNull
+    @DocumentReference
     @Setter
     protected Role role;
 
-    public String getRole() {
-        return role.getName();
-    }
-
-    public User(String email, String password, String firstName, String lastName, Role role) {
-        this.email = email;
-        this.password = password;
+    public User(@NonNull String firstName, @NonNull String lastName, @NonNull String email, @NonNull String password) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = role;
+        this.email = email;
+        this.password = password;
     }
 }

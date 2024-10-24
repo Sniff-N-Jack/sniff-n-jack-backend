@@ -1,9 +1,11 @@
 package com.soen342.sniffnjack.Repository;
 
 import com.soen342.sniffnjack.Entity.Client;
-import jakarta.transaction.Transactional;
+import org.springframework.data.mongodb.repository.Query;
 
-@Transactional
+import java.util.List;
+
 public interface ClientRepository extends UserRepository<Client> {
-
+    @Query("{ 'parent' : ?0 }")
+    List<Client> findDistinctByParent(Long parentId);
 }

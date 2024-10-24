@@ -2,9 +2,7 @@ package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Configuration.BasicAuthSecurity;
 import com.soen342.sniffnjack.Entity.Admin;
-import com.soen342.sniffnjack.Entity.Role;
 import com.soen342.sniffnjack.Entity.User;
-import com.soen342.sniffnjack.Exceptions.InvalidRoleException;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
 import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
 import com.soen342.sniffnjack.Repository.AdminRepository;
@@ -26,34 +24,34 @@ public class AdminController {
     private RoleRepository roleRepository;
 
     @GetMapping("/all")
-    public Iterable<User> getAllClients() {
+    public Iterable<User> getAllAdmins() {
         List<User> users = (List<User>) adminRepository.findAll();
         users.removeIf(user -> !user.getRole().equals("ADMIN"));
         return users;
     }
 
     @GetMapping("/firstName")
-    public Iterable<Admin> findUsersByFirstName(@RequestParam String firstName) {
+    public Iterable<Admin> findAdminsByFirstName(@RequestParam String firstName) {
         return adminRepository.findAllByFirstName(firstName);
     }
 
     @GetMapping("/lastName")
-    public Iterable<Admin> findUsersByLastName(@RequestParam String lastName) {
+    public Iterable<Admin> findAdminsByLastName(@RequestParam String lastName) {
         return adminRepository.findAllByLastName(lastName);
     }
 
     @GetMapping("/fullNameStrict")
-    public Iterable<Admin> findUsersByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
+    public Iterable<Admin> findAdminsByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
         return adminRepository.findDistinctByFirstNameAndLastName(firstName, lastName);
     }
 
     @GetMapping("/fullNameLoose")
-    public Iterable<Admin> findUsersByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
+    public Iterable<Admin> findAdminsByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
         return adminRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
-    public Admin addClient(@RequestBody Admin user) throws UserAlreadyExistsException {
+    public Admin addAdmin(@RequestBody Admin user) throws UserAlreadyExistsException {
         if (adminRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException(user.getEmail());
         }
@@ -63,7 +61,7 @@ public class AdminController {
     }
 
     @PatchMapping("/updatePersonal")
-    public Admin updateClientPersonalInfo(@RequestParam String firstName, @RequestParam String lastName, @RequestParam int age) throws UserNotFoundException {
+    public Admin updateAdminPersonalInfo(@RequestParam String firstName, @RequestParam String lastName) {
         Admin admin = adminRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         admin.setFirstName(firstName);
         admin.setLastName(lastName);
