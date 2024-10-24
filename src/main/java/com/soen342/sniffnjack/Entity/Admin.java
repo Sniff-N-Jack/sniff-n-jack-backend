@@ -10,4 +10,9 @@ public class Admin extends User {
         super();
         role = new Role("ADMIN");
     }
+
+    public Admin(String firstName, String lastName, String email, String password) {
+        super(firstName, lastName, email, password);
+        role = new Role("ADMIN");
+    }
 }

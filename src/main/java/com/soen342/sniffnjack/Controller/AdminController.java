@@ -61,7 +61,7 @@ public class AdminController {
     }
 
     @PatchMapping("/updatePersonal")
-    public Admin updateAdminPersonalInfo(@RequestParam String firstName, @RequestParam String lastName, @RequestParam int age) throws UserNotFoundException {
+    public Admin updateAdminPersonalInfo(@RequestParam String firstName, @RequestParam String lastName) {
         Admin admin = adminRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         admin.setFirstName(firstName);
         admin.setLastName(lastName);

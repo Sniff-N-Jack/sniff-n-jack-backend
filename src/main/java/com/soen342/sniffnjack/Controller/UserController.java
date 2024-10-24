@@ -47,6 +47,7 @@ public class UserController {
         return userRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 
+    // TODO: Add response status to ALL delete methods
     @DeleteMapping("/delete")
     public void deleteUser(@RequestParam String email) throws UserNotFoundException {
         if (!userRepository.existsByEmail(email)) {

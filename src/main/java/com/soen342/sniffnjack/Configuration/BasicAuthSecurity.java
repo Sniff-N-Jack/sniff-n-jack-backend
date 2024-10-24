@@ -56,7 +56,7 @@ public class BasicAuthSecurity {
                             "/v3/**",
                             "/swagger-ui/**",
                             "/clients/add",
-                            "/instructions/add",
+                            "/instructors/add",
                             "/takenOfferings/all",
                             "/takenOfferings/get",
                             "/activities/all",

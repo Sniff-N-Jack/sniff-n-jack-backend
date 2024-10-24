@@ -101,7 +101,7 @@ public class ClientController {
     }
 
     @PatchMapping("/addParent")
-    public Client addParent(@RequestParam String email) throws UserNotFoundException, InvalidRoleException, InvalidParentCandidateException {
+    public Client addParent(@RequestParam String email) throws UserNotFoundException, InvalidRoleException, InvalidParentCandidateException, IllegalArgumentException {
         Client child = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         User parent = userRepository.findByEmail(email);
         if (parent == null) {

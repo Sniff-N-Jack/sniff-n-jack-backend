@@ -14,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,7 +91,7 @@ public class InstructorController {
         return instructorRepository.save(user);
     }
 
-    @PatchMapping("/updatePersonal")
+    @PatchMapping(value = "/updatePersonal", consumes = "application/json")
     public void updatePersonal(@RequestBody Instructor instructor) {
         Instructor currentInstructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         currentInstructor.setFirstName(instructor.getFirstName());
@@ -102,17 +99,17 @@ public class InstructorController {
         instructorRepository.save(currentInstructor);
     }
 
-    @PatchMapping("/setAvailabilities")
-    public void setAvailabilities(@RequestBody List<Timeslot> availabilities) {
+    @PatchMapping(value = "/setAvailabilities", consumes = "application/json")
+    public Instructor setAvailabilities(@RequestBody List<Timeslot> availabilities) throws IllegalArgumentException {
         Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         instructor.setAvailabilities(availabilities);
-        instructorRepository.save(instructor);
+        return instructorRepository.save(instructor);
     }
 
-    @PatchMapping("/setSpecializations")
-    public void setSpecializations(@RequestBody List<String> specializations) {
+    @PatchMapping(value = "/setSpecializations", consumes = "application/json")
+    public Instructor setSpecializations(@RequestBody List<String> specializations) {
         Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         instructor.setSpecializations(specializations.stream().map(activityRepository::findByName).collect(Collectors.toList()));
-        instructorRepository.save(instructor);
+        return instructorRepository.save(instructor);
     }
 }

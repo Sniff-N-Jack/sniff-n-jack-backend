@@ -36,4 +36,11 @@ public abstract class User {
     @DocumentReference
     @Setter
     protected Role role;
+
+    public User(@NonNull String firstName, @NonNull String lastName, @NonNull String email, @NonNull String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+    }
 }

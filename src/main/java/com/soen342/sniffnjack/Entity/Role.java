@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Document
 @Builder
@@ -30,5 +29,10 @@ public class Role {
 
     public Role(@NonNull String name) {
         this.name = name;
+    }
+
+    public <T> Role(String name, Collection<Privilege> privileges) {
+        this.name = name;
+        this.privileges = privileges;
     }
 }
