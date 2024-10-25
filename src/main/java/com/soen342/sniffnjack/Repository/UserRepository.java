@@ -4,9 +4,9 @@ import com.soen342.sniffnjack.Entity.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.UUID;
 
-// TODO: Override save methods of ALL repositories to set the ID using the IdMaker class instead of using it at the constructor level
-public interface UserRepository<T extends User> extends MongoRepository<User, Long> {
+public interface UserRepository<T extends User> extends MongoRepository<User, UUID> {
     T findByEmail(String email);
     List<T> findAllByFirstName(String firstName);
     List<T> findAllByLastName(String lastName);

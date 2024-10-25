@@ -1,20 +1,15 @@
 package com.soen342.sniffnjack.Entity;
 
-import com.soen342.sniffnjack.Utils.IdMaker;
 import lombok.*;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Document
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class User {
-    @MongoId
-    protected Long id = IdMaker.getId();
-
+public abstract class User extends UuidIdentifiedEntity {
     @NonNull
     @Setter
     protected String firstName;
