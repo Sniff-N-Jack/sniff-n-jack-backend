@@ -1,21 +1,22 @@
 package com.soen342.sniffnjack.Entity;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+@Entity
 @Getter
 @Setter
-@Document(collection = "user")
-@BsonDiscriminator(key = "type", value = "Client")
+@AssociationOverride(name = "role", foreignKey = @ForeignKey(name = "FK_CLIENT_ROLE"))
 public class Client extends User {
     private int age;
 
     @Nullable
-    @DocumentReference
+    @ManyToOne(targetEntity = Client.class)
+    @JoinColumn(name = "parent_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "FK_CLIENT_PARENT"))
     private Client parent;
 
     public Client() {

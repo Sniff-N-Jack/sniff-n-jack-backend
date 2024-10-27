@@ -1,13 +1,12 @@
 package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Entity.Activity;
-import com.soen342.sniffnjack.Exceptions.ActivitiesAlreadyExistException;
 import com.soen342.sniffnjack.Exceptions.ActivityAlreadyExistsException;
+import com.soen342.sniffnjack.Exceptions.InvalidActivityNameException;
 import com.soen342.sniffnjack.Repository.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -30,26 +29,34 @@ public class ActivityController {
     }
 
     @PostMapping("/addMultiple")
-    public Iterable<Activity> addMultipleActivities(@RequestParam String[] names) throws ActivitiesAlreadyExistException {
-        List<Activity> activities = activityRepository.findDistinctByNameIn(Arrays.stream(names).toList());
-        if (!activities.isEmpty()) {
-            throw new ActivitiesAlreadyExistException(activities.stream().map(Activity::getName).toArray(String[]::new));
-        }
-        for (String name : names) {
-            activities.add(activityRepository.save(new Activity(name)));
-        }
-        return activities;
+    public Iterable<Activity> addMultipleActivities(@RequestBody List<Activity> activities) throws Exception {
+        getActivityList(activities, true);
+        return activityRepository.saveAll(activities);
     }
 
     @DeleteMapping("/delete")
-    public void deleteActivity(@RequestParam String name) {
+    public void deleteActivity(@RequestParam String name) throws InvalidActivityNameException {
+        if (!activityRepository.existsByName(name)) {
+            throw new InvalidActivityNameException(name);
+        }
         activityRepository.deleteByName(name);
     }
 
     @DeleteMapping("/deleteMultiple")
-    public void deleteMultipleActivities(@RequestParam String[] names) {
-        for (String name : names) {
-            activityRepository.deleteByName(name);
+    public void deleteMultipleActivities(@RequestBody List<Activity> activities) throws Exception {
+        activities = getActivityList(activities, false);
+        activityRepository.deleteAll(activities);
+    }
+
+    private List<Activity> getActivityList(List<Activity> uncheckedActivityList, boolean adding) throws Exception {
+        List<Activity> activityList = uncheckedActivityList.stream().map(activity -> activityRepository.findByName(activity.getName())).toList();
+        if (adding && !activityList.isEmpty())
+            throw new ActivityAlreadyExistsException(activityList.stream().map(Activity::getName).toList());
+        else if (!adding) {
+            List<String> invalidActivityNames = uncheckedActivityList.stream().map(Activity::getName).filter(name -> activityList.stream().noneMatch(activity -> activity.getName().equals(name))).toList();
+            if (!invalidActivityNames.isEmpty()) throw new InvalidActivityNameException(invalidActivityNames);
         }
+
+        return activityList;
     }
 }

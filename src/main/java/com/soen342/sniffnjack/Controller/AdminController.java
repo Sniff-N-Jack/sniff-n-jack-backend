@@ -2,17 +2,12 @@ package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Configuration.BasicAuthSecurity;
 import com.soen342.sniffnjack.Entity.Admin;
-import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
-import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
 import com.soen342.sniffnjack.Repository.AdminRepository;
 import com.soen342.sniffnjack.Repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/admins")
@@ -24,10 +19,8 @@ public class AdminController {
     private RoleRepository roleRepository;
 
     @GetMapping("/all")
-    public Iterable<User> getAllAdmins() {
-        List<User> users = (List<User>) adminRepository.findAll();
-        users.removeIf(user -> !user.getRole().equals("ADMIN"));
-        return users;
+    public Iterable<Admin> getAllAdmins() {
+        return adminRepository.findAll();
     }
 
     @GetMapping("/firstName")

@@ -1,34 +1,32 @@
 package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Configuration.BasicAuthSecurity;
-import com.soen342.sniffnjack.Entity.Admin;
 import com.soen342.sniffnjack.Entity.Client;
 import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.InvalidParentCandidateException;
+import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
+import com.soen342.sniffnjack.Utils.UserGetter;
 import com.soen342.sniffnjack.Exceptions.InvalidRoleException;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
-import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
 import com.soen342.sniffnjack.Repository.ClientRepository;
 import com.soen342.sniffnjack.Repository.RoleRepository;
-import com.soen342.sniffnjack.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/clients")
 public class ClientController {
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private ClientRepository clientRepository;
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private UserGetter userGetter;
 
     private void checkParent(String email, String role) throws InvalidRoleException, InvalidParentCandidateException {
         if (!role.equals("CLIENT")) {
@@ -41,10 +39,8 @@ public class ClientController {
     }
 
     @GetMapping("/all")
-    public Iterable<User> getAllClients() {
-        List<User> users = (List<User>) clientRepository.findAll();
-        users.removeIf(user -> !user.getRole().equals("CLIENT"));
-        return users;
+    public Iterable<Client> getAllClients() {
+        return clientRepository.findAll();
     }
 
     @GetMapping("/firstName")
@@ -70,7 +66,7 @@ public class ClientController {
     @GetMapping("/children")
     public Collection<Client> getChildren() {
         Client parent = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        return clientRepository.findDistinctByParent(parent.getId());
+        return clientRepository.findDistinctByParent(parent);
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
@@ -81,10 +77,7 @@ public class ClientController {
         user.setRole(roleRepository.findByName("CLIENT"));
         user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
         if (user.getParent() != null) {
-            User parent = userRepository.findByEmail(user.getParent().getEmail());
-            if (parent == null) {
-                throw new UserNotFoundException(user.getParent().getEmail());
-            }
+            User parent = userGetter.getUserByEmail(user.getParent().getEmail());
             checkParent(parent.getEmail(), parent.getRole().getName());
             user.setParent((Client) parent);
         }
@@ -101,14 +94,11 @@ public class ClientController {
     }
 
     @PatchMapping("/addParent")
-    public Client addParent(@RequestParam String email) throws UserNotFoundException, InvalidRoleException, InvalidParentCandidateException, IllegalArgumentException {
+    public Client addParent(@RequestParam String email) throws InvalidRoleException, InvalidParentCandidateException {
         Client child = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        User parent = userRepository.findByEmail(email);
-        if (parent == null) {
-            throw new UserNotFoundException(email);
-        }
+        Client parent = clientRepository.findByEmail(email);
         checkParent(email, parent.getRole().getName());
-        child.setParent((Client) parent);
+        child.setParent(parent);
         return clientRepository.save(child);
     }
 

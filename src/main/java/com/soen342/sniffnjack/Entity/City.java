@@ -1,23 +1,23 @@
 package com.soen342.sniffnjack.Entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Activity {
+public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
+    private Long id;
 
     @NonNull
     @Column(unique = true, nullable = false)
     @Setter
-    protected String name;
+    private String name;
 
-    public Activity(@NonNull String name) {
+    public City(@NonNull String name) {
         this.name = name;
     }
 }

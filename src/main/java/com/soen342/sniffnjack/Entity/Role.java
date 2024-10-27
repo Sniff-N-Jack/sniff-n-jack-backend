@@ -1,26 +1,27 @@
 package com.soen342.sniffnjack.Entity;
 
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
-import java.util.Collection;
+import java.util.List;
 
-@Document
-@Builder
+@Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role extends UuidIdentifiedEntity {
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     @NonNull
-    @Indexed(unique = true)
+    @Column(unique = true, nullable = false)
     @Setter
     private String name;
 
-    @DocumentReference
+    @OneToMany(targetEntity = Privilege.class)
     @Setter
-    private Collection<Privilege> privileges;
+    private List<Privilege> privileges;
 
     public Role(@NonNull String name) {
         this.name = name;

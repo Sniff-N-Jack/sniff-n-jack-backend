@@ -1,18 +1,10 @@
 services:
-#  mysql:
-#    image: 'mysql:latest'
-#    environment:
-#      - 'MYSQL_DATABASE=sniffnjack'
-#      - 'MYSQL_PASSWORD=secret123'
-#      - 'MYSQL_ROOT_PASSWORD=verysecret123'
-#      - 'MYSQL_USER=master'
-#    ports:
-#      - '3306:3306'
-  mongodb:
-    image: 'mongo'
-    ports:
-      - '27017:27017'
+  mysql:
+    image: 'mysql:latest'
     environment:
-        - 'MONGO_INITDB_DATABASE=sniffnjack'
-        - 'MONGO_INITDB_ROOT_USERNAME=master'
-        - 'MONGO_INITDB_ROOT_PASSWORD=soen342secret'
+      - 'MYSQL_DATABASE=sniffnjack'
+      - 'MYSQL_PASSWORD=secret123'
+      - 'MYSQL_ROOT_PASSWORD=verysecret123'
+      - 'MYSQL_USER=master'
+    ports:
+      - '3306:3306'

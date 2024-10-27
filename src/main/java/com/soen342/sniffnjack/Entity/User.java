@@ -1,15 +1,17 @@
 package com.soen342.sniffnjack.Entity;
 
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
-@Document
+@MappedSuperclass
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class User extends UuidIdentifiedEntity {
+public abstract class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected Long id;
+
     @NonNull
     @Setter
     protected String firstName;
@@ -19,7 +21,7 @@ public abstract class User extends UuidIdentifiedEntity {
     protected String lastName;
 
     @NonNull
-    @Indexed(unique = true)
+    @Column(unique = true)
     @Setter
     protected String email;
 
@@ -28,7 +30,8 @@ public abstract class User extends UuidIdentifiedEntity {
     protected String password;
 
     @NonNull
-    @DocumentReference
+    @ManyToOne(targetEntity = Role.class)
+    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     @Setter
     protected Role role;
 

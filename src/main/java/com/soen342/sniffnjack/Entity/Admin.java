@@ -1,10 +1,15 @@
 package com.soen342.sniffnjack.Entity;
 
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.AssociationOverride;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
+import lombok.Getter;
+import lombok.Setter;
 
-@Document(collection = "user")
-@BsonDiscriminator(key = "type", value = "Admin")
+@Entity
+@Getter
+@Setter
+@AssociationOverride(name = "role", foreignKey = @ForeignKey(name = "FK_ADMIN_ROLE"))
 public class Admin extends User {
     public Admin() {
         super();

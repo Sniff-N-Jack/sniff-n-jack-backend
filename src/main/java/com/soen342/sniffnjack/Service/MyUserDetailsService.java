@@ -2,8 +2,9 @@ package com.soen342.sniffnjack.Service;
 
 import com.soen342.sniffnjack.Entity.Privilege;
 import com.soen342.sniffnjack.Entity.User;
+import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
 import com.soen342.sniffnjack.Repository.RoleRepository;
-import com.soen342.sniffnjack.Repository.UserRepository;
+import com.soen342.sniffnjack.Utils.UserGetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +21,7 @@ import java.util.List;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserGetter userGetter;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -28,8 +29,10 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException{
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
+        User user;
+        try {
+            user = userGetter.getUserByEmail(email);
+        } catch (UserNotFoundException e) {
             throw new UsernameNotFoundException(
                     "No user found with email: " + email);
         }

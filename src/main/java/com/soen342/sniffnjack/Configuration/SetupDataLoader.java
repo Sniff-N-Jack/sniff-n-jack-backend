@@ -54,7 +54,7 @@ public class SetupDataLoader implements ApplicationListener <ContextRefreshedEve
         String email = "admin@test.com";
 
         if(adminRepository.findByEmail(email) == null) {
-            User user = new Admin();
+            Admin user = new Admin();
             user.setFirstName("Admin-First");
             user.setLastName("Admin-Last");
             user.setPassword(passwordEncoder.encode("admin123"));
@@ -79,7 +79,7 @@ public class SetupDataLoader implements ApplicationListener <ContextRefreshedEve
 
     @Transactional
     public Role createRoleIfNotFound(
-            String name, Collection<Privilege> privileges) {
+            String name, List<Privilege> privileges) {
 
         Role role = roleRepository.findByName(name);
         if (role == null) {

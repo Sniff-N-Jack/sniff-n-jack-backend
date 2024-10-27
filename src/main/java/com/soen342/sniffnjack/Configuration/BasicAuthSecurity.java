@@ -61,7 +61,8 @@ public class BasicAuthSecurity {
                             "/takenOfferings/get",
                             "/activities/all",
                             "/instructors/all",
-                            "/instructors/specialization"
+                            "/instructors/specialization",
+                            "/cities/all"
                     ).permitAll()
                     .requestMatchers(
                             "/clients/updatePersonal",
@@ -73,10 +74,13 @@ public class BasicAuthSecurity {
                             "/admins/add",
                             "/admins/updatePersonal",
                             "activities/**",
-                            "/instructors/availability"
+                            "/instructors/availability",
+                            "/cities/**"
                     ).hasRole("ADMIN")
                     .requestMatchers(
-                            "/instructors/updatePersonal"
+                            "/instructors/updatePersonal",
+                            "/instructors/setSpecializations",
+                            "/instructors/setAvailabilities"
                     ).hasRole("INSTRUCTOR")
                     .anyRequest().authenticated()
         );

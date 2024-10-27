@@ -1,14 +1,8 @@
 package com.soen342.sniffnjack.Repository;
 
 import com.soen342.sniffnjack.Entity.Role;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
-import java.util.UUID;
-
-public interface RoleRepository extends MongoRepository<Role, UUID> {
+public interface RoleRepository extends CrudRepository<Role, Long> {
     Role findByName(String name);
-    @Query("{ 'privileges' : ?0 }")
-    List<Role> findByPrivilege(String privilege);
 }
