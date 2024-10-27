@@ -1,10 +1,7 @@
 package com.soen342.sniffnjack.Entity;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.AssociationOverride;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +13,7 @@ import java.util.List;
 @AssociationOverride(name = "role", foreignKey = @ForeignKey(name = "FK_INSTRUCTOR_ROLE"))
 public class Instructor extends User {
     @Nullable
-    @ManyToMany
+    @ManyToMany(targetEntity = City.class)
     private List<City> availabilities;
 
     @Nullable

@@ -73,7 +73,7 @@ public class InstructorController {
         if (specialization == null) {
             throw new InvalidActivityNameException(activityName);
         }
-        return instructorRepository.findDistinctBySpecialization(specialization);
+        return instructorRepository.findDistinctBySpecializationsContaining(specialization);
     }
 
     @GetMapping("/availability")
@@ -82,7 +82,7 @@ public class InstructorController {
         if (availability == null) {
             throw new InvalidCityNameException(cityName);
         }
-        return instructorRepository.findDistinctByAvailability(availability);
+        return instructorRepository.findDistinctByAvailabilitiesContaining(availability);
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
