@@ -36,7 +36,7 @@ public class CityController {
         return cityRepository.save(new City(name));
     }
 
-    @PostMapping("/addMultiple")
+    @PostMapping(value ="/addMultiple", consumes = "application/json")
     public Iterable<City> addMultipleCities(@RequestBody List<City> cities) throws Exception{
         getCityList(cities, true);
         return cityRepository.saveAll(cities);
@@ -50,7 +50,7 @@ public class CityController {
         cityRepository.deleteByName(name);
     }
 
-    @DeleteMapping("/deleteMultiple")
+    @DeleteMapping(value = "/deleteMultiple", consumes = "application/json")
     public void deleteMultipleCities(@RequestBody List<City> cities) throws Exception {
         cities = getCityList(cities, false);
         cityRepository.deleteAll(cities);

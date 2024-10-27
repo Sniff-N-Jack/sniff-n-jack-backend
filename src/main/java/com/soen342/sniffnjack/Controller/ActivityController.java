@@ -28,7 +28,7 @@ public class ActivityController {
         return activityRepository.save(new Activity(name));
     }
 
-    @PostMapping("/addMultiple")
+    @PostMapping(value = "/addMultiple", consumes = "application/json")
     public Iterable<Activity> addMultipleActivities(@RequestBody List<Activity> activities) throws Exception {
         getActivityList(activities, true);
         return activityRepository.saveAll(activities);
@@ -42,7 +42,7 @@ public class ActivityController {
         activityRepository.deleteByName(name);
     }
 
-    @DeleteMapping("/deleteMultiple")
+    @DeleteMapping(value = "/deleteMultiple", consumes = "application/json")
     public void deleteMultipleActivities(@RequestBody List<Activity> activities) throws Exception {
         activities = getActivityList(activities, false);
         activityRepository.deleteAll(activities);

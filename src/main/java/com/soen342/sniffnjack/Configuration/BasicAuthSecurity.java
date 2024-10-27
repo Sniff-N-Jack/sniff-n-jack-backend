@@ -70,6 +70,7 @@ public class BasicAuthSecurity {
                             "/clients/removeParent"
                     ).hasRole("CLIENT")
                     .requestMatchers(
+                            "/admins/all",
                             "/users/delete",
                             "/admins/add",
                             "/admins/updatePersonal",
