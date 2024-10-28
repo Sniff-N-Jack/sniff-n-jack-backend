@@ -11,13 +11,15 @@ import lombok.Setter;
 @Setter
 @AssociationOverride(name = "role", foreignKey = @ForeignKey(name = "FK_ADMIN_ROLE"))
 public class Admin extends User {
+    public static String ADMIN_ROLE = "ADMIN";
+
     public Admin() {
         super();
-        role = new Role("ADMIN");
+        role = new Role(ADMIN_ROLE);
     }
 
     public Admin(String firstName, String lastName, String email, String password) {
         super(firstName, lastName, email, password);
-        role = new Role("ADMIN");
+        role = new Role(ADMIN_ROLE);
     }
 }
