@@ -6,6 +6,8 @@ import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
 import com.soen342.sniffnjack.Repository.RoleRepository;
 import com.soen342.sniffnjack.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
@@ -50,13 +52,26 @@ public class UserController {
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
-    public User addUser(@RequestBody User user) throws UserAlreadyExistsException {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new UserAlreadyExistsException(user.getEmail());
+    public ResponseEntity<?> addUser(@RequestBody User user) {
+        try {
+            if (userRepository.existsByEmail(user.getEmail())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("User already exists with email: " + user.getEmail());
+            }
+            // Set the dtype to a default value
+            user.setDtype("User");
+            
+            user.setRoles(roleRepository.findAllByNameIsIn(user.getRoles()));
+            User savedUser = userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred: " + e.getMessage());
         }
-        user.setRoles(roleRepository.findAllByNameIsIn(user.getRoles()));
-        return userRepository.save(user);
     }
+    
+
+    
 
     @DeleteMapping("/delete")
     public void deleteUser(@RequestParam Long id) {

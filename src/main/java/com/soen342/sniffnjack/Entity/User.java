@@ -52,6 +52,11 @@ private String password;
 @Setter
 private Collection<Role> roles;
 
+@Column(name = "dtype", nullable = true)
+@Getter
+@Setter
+private String dtype = "User"; // Default value if needed
+
 public Collection<String> getRoles() {
         return roles.stream().map(Role::getName).collect(Collectors.toList());
 }
