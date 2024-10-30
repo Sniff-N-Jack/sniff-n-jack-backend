@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull
@@ -19,7 +19,7 @@ public class Role {
     @Setter
     private String name;
 
-    @ManyToMany(targetEntity = Privilege.class, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = Privilege.class)
     @Setter
     private List<Privilege> privileges;
 

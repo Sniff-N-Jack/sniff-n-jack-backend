@@ -2,6 +2,7 @@ package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Configuration.BasicAuthSecurity;
 import com.soen342.sniffnjack.Entity.Admin;
+import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
 import com.soen342.sniffnjack.Repository.AdminRepository;
 import com.soen342.sniffnjack.Repository.RoleRepository;
@@ -19,7 +20,7 @@ public class AdminController {
     private RoleRepository roleRepository;
 
     @GetMapping("/all")
-    public Iterable<Admin> getAllAdmins() {
+    public Iterable<User> getAllAdmins() {
         return adminRepository.findAll();
     }
 

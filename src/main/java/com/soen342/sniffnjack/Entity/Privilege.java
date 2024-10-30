@@ -8,8 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Privilege {
+    public static String READ_PRIVILEGE = "READ";
+    public static String WRITE_PRIVILEGE = "WRITE";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull

@@ -1,15 +1,13 @@
 package com.soen342.sniffnjack.Entity;
 
-import jakarta.persistence.AssociationOverride;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@AssociationOverride(name = "role", foreignKey = @ForeignKey(name = "FK_ADMIN_ROLE"))
+@DiscriminatorValue("Admin")
 public class Admin extends User {
     public static String ADMIN_ROLE = "ADMIN";
 

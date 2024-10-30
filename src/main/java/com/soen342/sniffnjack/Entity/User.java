@@ -3,13 +3,15 @@ package com.soen342.sniffnjack.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
     @NonNull
@@ -30,7 +32,7 @@ public abstract class User {
     protected String password;
 
     @NonNull
-    @ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Role.class, optional = false)
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     @Setter
     protected Role role;

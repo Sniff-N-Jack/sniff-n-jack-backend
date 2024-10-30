@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@AssociationOverride(name = "role", foreignKey = @ForeignKey(name = "FK_CLIENT_ROLE"))
+@DiscriminatorValue("Client")
 public class Client extends User {
     public static String CLIENT_ROLE = "CLIENT";
 
@@ -20,7 +20,7 @@ public class Client extends User {
     private String phone;
 
     @Nullable
-    @ManyToOne(targetEntity = Client.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Client.class)
     @JoinColumn(name = "parent_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "FK_CLIENT_PARENT"))

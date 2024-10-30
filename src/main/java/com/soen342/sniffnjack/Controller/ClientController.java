@@ -39,7 +39,7 @@ public class ClientController {
     }
 
     @GetMapping("/all")
-    public Iterable<Client> getAllClients() {
+    public Iterable<User> getAllClients() {
         return clientRepository.findAll();
     }
 

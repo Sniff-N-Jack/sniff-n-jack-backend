@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@AssociationOverride(name = "role", foreignKey = @ForeignKey(name = "FK_INSTRUCTOR_ROLE"))
+@DiscriminatorValue("Instructor")
 public class Instructor extends User {
     public static String INSTRUCTOR_ROLE = "INSTRUCTOR";
 
