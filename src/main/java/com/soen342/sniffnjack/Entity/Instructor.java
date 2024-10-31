@@ -21,10 +21,20 @@ public class Instructor extends User {
 
     @Nullable
     @ManyToMany(targetEntity = City.class, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "instructor_city",
+            joinColumns = @JoinColumn(name = "instructor_id"),
+            inverseJoinColumns = @JoinColumn(name = "city_id")
+    )
     private List<City> availabilities;
 
     @Nullable
     @ManyToMany(targetEntity = Activity.class, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "instructor_activity",
+            joinColumns = @JoinColumn(name = "instructor_id"),
+            inverseJoinColumns = @JoinColumn(name = "activity_id")
+    )
     private List<Activity> specializations;
 
     public Instructor() {

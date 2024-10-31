@@ -22,8 +22,7 @@ public class Client extends User {
     @Nullable
     @ManyToOne(targetEntity = Client.class)
     @JoinColumn(name = "parent_id",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "FK_CLIENT_PARENT"))
+            referencedColumnName = "id")
     private Client parent;
 
     public Client() {
