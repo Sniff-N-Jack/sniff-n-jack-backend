@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ClientRepository extends UserRepository<Client> {
     @Query("select c from Client c where c.parent = ?1")
-    List<Client> findDistinctByParent(Client parent);
+    List<Client> findAllByParent(Client parent);
 }

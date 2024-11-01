@@ -68,7 +68,7 @@ public class InstructorController {
         return instructorRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 
-//    @GetMapping("/specialization")
+//    @GetMapping("/getBySpecialization")
 //    public Iterable<Instructor> findInstructorsBySpecialization(@RequestParam String activityName) throws InvalidActivityNameException {
 //        Activity specialization = activityRepository.findByName(activityName);
 //        if (specialization == null) {
@@ -77,7 +77,7 @@ public class InstructorController {
 //        return instructorRepository.findDistinctBySpecializationsContaining(specialization);
 //    }
 //
-//    @GetMapping("/availability")
+//    @GetMapping("/getByAvailability")
 //    public Iterable<Instructor> findInstructorsByAvailability(@RequestParam String cityName) throws InvalidCityNameException {
 //        City availability = cityRepository.findByName(cityName);
 //        if (availability == null) {

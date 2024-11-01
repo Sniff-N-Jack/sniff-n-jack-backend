@@ -61,13 +61,18 @@ public class BasicAuthSecurity {
                             "/takenOfferings/get",
                             "/activities/all",
                             "/instructors/all",
-                            "/instructors/specialization",
+                            "/instructors/getBySpecialization",
                             "/cities/all"
                     ).permitAll()
                     .requestMatchers(
                             "/clients/updatePersonal",
                             "/clients/addParent",
-                            "/clients/removeParent"
+                            "/clients/removeParent",
+                            "/offerings/getTaken",
+                            "/offerings/add",
+                            "/offerings/delete",
+                            "/booking/get",
+                            "/booking/getByClient"
                     ).hasRole("CLIENT")
                     .requestMatchers(
                             "/admins/all",
@@ -75,13 +80,24 @@ public class BasicAuthSecurity {
                             "/admins/add",
                             "/admins/updatePersonal",
                             "activities/**",
-                            "/instructors/availability",
-                            "/cities/**"
+                            "/instructors/getByAvailability",
+                            "/cities/**",
+                            "/locations/**",
+                            "/offerings/add",
+                            "/offerings/update",
+                            "/offerings/delete",
+                            "/offerings/all",
+                            "/offerings/getByInstructor",
+                            "/booking/all",
+                            "/booking/getByClient"
                     ).hasRole("ADMIN")
                     .requestMatchers(
                             "/instructors/updatePersonal",
                             "/instructors/setSpecializations",
-                            "/instructors/setAvailabilities"
+                            "/instructors/setAvailabilities",
+                            "/offerings/getAvailable",
+                            "/offerings/getByInstructor",
+                            "/booking/getByOffering"
                     ).hasRole("INSTRUCTOR")
                     .anyRequest().authenticated()
         );

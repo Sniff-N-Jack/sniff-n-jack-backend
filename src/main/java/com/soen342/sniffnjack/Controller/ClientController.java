@@ -66,7 +66,7 @@ public class ClientController {
     @GetMapping("/children")
     public Collection<Client> getChildren() {
         Client parent = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        return clientRepository.findDistinctByParent(parent);
+        return clientRepository.findAllByParent(parent);
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
