@@ -20,7 +20,7 @@ public class Client extends User {
     private String phone;
 
     @Nullable
-    @ManyToOne(targetEntity = Client.class)
+    @ManyToOne(targetEntity = Client.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id",
             referencedColumnName = "id")
     private Client parent;

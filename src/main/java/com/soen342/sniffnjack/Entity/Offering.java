@@ -45,19 +45,19 @@ public class Offering {
     private DayOfWeek dayOfWeek;
 
     @Nullable
-    @ManyToOne(targetEntity = Instructor.class)
+    @ManyToOne(targetEntity = Instructor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "instructor_id", referencedColumnName = "id")
     @Setter
     private Instructor instructor;
 
     @NonNull
-    @ManyToOne(targetEntity = Location.class, optional = false)
+    @ManyToOne(targetEntity = Location.class, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id", referencedColumnName = "id", nullable = false)
     @Setter
     private Location location;
 
     @NonNull
-    @ManyToOne(targetEntity = Activity.class, optional = false)
+    @ManyToOne(targetEntity = Activity.class, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "activity_id", referencedColumnName = "id", nullable = false)
     @Setter
     private Activity activity;

@@ -32,7 +32,7 @@ public abstract class User {
     protected String password;
 
     @NonNull
-    @ManyToOne(targetEntity = Role.class, optional = false)
+    @ManyToOne(targetEntity = Role.class, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     @Setter
     protected Role role;

@@ -14,11 +14,11 @@ public class Booking {
     private Long id;
 
     @NonNull
-    @ManyToOne(targetEntity = Offering.class, optional = false)
+    @ManyToOne(targetEntity = Offering.class, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "offering_id", referencedColumnName = "id", nullable = false)
     private Offering offering;
 
-    @ManyToOne(targetEntity = Client.class, optional = false)
+    @ManyToOne(targetEntity = Client.class, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", referencedColumnName = "id", nullable = false)
     private Client client;
 }

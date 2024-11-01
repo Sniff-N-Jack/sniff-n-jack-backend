@@ -19,7 +19,7 @@ public class Role {
     @Setter
     private String name;
 
-    @ManyToMany(targetEntity = Privilege.class)
+    @ManyToMany(targetEntity = Privilege.class, fetch = FetchType.EAGER)
     @Setter
     private List<Privilege> privileges;
 

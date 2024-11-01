@@ -24,7 +24,7 @@ public class Location {
     @Setter
     private String room;
 
-    @ManyToOne(targetEntity = City.class, optional = false)
+    @ManyToOne(targetEntity = City.class, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "city_id", referencedColumnName = "id", nullable = false)
     @Setter
     private City city;
