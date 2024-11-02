@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface InstructorRepository extends UserRepository<Instructor> {
+public interface InstructorRepository extends UserRepository {
 //    @Query("select i from Instructor i where ?1 in i.specializations")
 //    List<Instructor> findDistinctBySpecializationsContaining(Activity specialization);
 //    List<Instructor> findDistinctByAvailabilitiesContaining(City availability);

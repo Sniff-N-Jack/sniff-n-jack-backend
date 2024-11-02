@@ -32,7 +32,7 @@ public class ClientController {
         if (!role.equals("CLIENT")) {
             throw new InvalidRoleException(email, role, "CLIENT");
         }
-        Client parent = clientRepository.findByEmail(email);
+        Client parent = (Client) clientRepository.findByEmail(email);
         if (parent.getAge() < 18) {
             throw new InvalidParentCandidateException(email);
         }
@@ -43,29 +43,9 @@ public class ClientController {
         return clientRepository.findAll();
     }
 
-    @GetMapping("/firstName")
-    public Iterable<Client> findClientsByFirstName(@RequestParam String firstName) {
-        return clientRepository.findAllByFirstName(firstName);
-    }
-
-    @GetMapping("/lastName")
-    public Iterable<Client> findClientsByLastName(@RequestParam String lastName) {
-        return clientRepository.findAllByLastName(lastName);
-    }
-
-    @GetMapping("/fullNameStrict")
-    public Iterable<Client> findClientsByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
-        return clientRepository.findDistinctByFirstNameAndLastName(firstName, lastName);
-    }
-
-    @GetMapping("/fullNameLoose")
-    public Iterable<Client> findClientsByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
-        return clientRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
-    }
-
     @GetMapping("/children")
     public Collection<Client> getChildren() {
-        Client parent = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Client parent = (Client) clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         return clientRepository.findAllByParent(parent);
     }
 
@@ -75,7 +55,7 @@ public class ClientController {
             throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setRole(roleRepository.findByName("CLIENT"));
-        user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
+        user.setPassword((user.getPassword()));
         if (user.getParent() != null) {
             User parent = userGetter.getUserByEmail(user.getParent().getEmail());
             checkParent(parent.getEmail(), parent.getRole().getName());
@@ -86,7 +66,7 @@ public class ClientController {
 
     @PatchMapping("/updatePersonal")
     public Client updateClientPersonalInfo(@RequestParam String firstName, @RequestParam String lastName, @RequestParam int age) {
-        Client client = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Client client = (Client) clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         client.setFirstName(firstName);
         client.setLastName(lastName);
         client.setAge(age);
@@ -95,8 +75,8 @@ public class ClientController {
 
     @PatchMapping("/addParent")
     public Client addParent(@RequestParam String email) throws InvalidRoleException, InvalidParentCandidateException {
-        Client child = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        Client parent = clientRepository.findByEmail(email);
+        Client child = (Client) clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Client parent = (Client) clientRepository.findByEmail(email);
         checkParent(email, parent.getRole().getName());
         child.setParent(parent);
         return clientRepository.save(child);
@@ -104,7 +84,7 @@ public class ClientController {
 
     @PatchMapping("/removeParent")
     public Client removeParent() {
-        Client child = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Client child = (Client) clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (child.getParent() == null) {
             return child;
         }
@@ -114,8 +94,8 @@ public class ClientController {
 
     @PatchMapping("/removeChild")
     public Client removeChild(@RequestParam String email) {
-        Client parent = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        Client child = clientRepository.findByEmail(email);
+        Client parent = (Client) clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Client child = (Client) clientRepository.findByEmail(email);
         if (child == null) {
             return parent;
         }

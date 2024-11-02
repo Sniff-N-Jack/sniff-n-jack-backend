@@ -41,32 +41,14 @@ public class InstructorController {
 
     @GetMapping("/get")
     public Instructor findInstructorByEmail(@RequestParam String email) throws UserNotFoundException {
-        Instructor user = instructorRepository.findByEmail(email);
+        Instructor user = (Instructor) instructorRepository.findByEmail(email);
         if (user == null) {
             throw new UserNotFoundException(email);
         }
         return user;
     }
 
-    @GetMapping("/firstName")
-    public Iterable<Instructor> findUsersByFirstName(@RequestParam String firstName) {
-        return instructorRepository.findAllByFirstName(firstName);
-    }
 
-    @GetMapping("/lastName")
-    public Iterable<Instructor> findUsersByLastName(@RequestParam String lastName) {
-        return instructorRepository.findAllByLastName(lastName);
-    }
-
-    @GetMapping("/fullNameStrict")
-    public Iterable<Instructor> findUsersByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
-        return instructorRepository.findDistinctByFirstNameAndLastName(firstName, lastName);
-    }
-
-    @GetMapping("/fullNameLoose")
-    public Iterable<Instructor> findUsersByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
-        return instructorRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
-    }
 
 //    @GetMapping("/getBySpecialization")
 //    public Iterable<Instructor> findInstructorsBySpecialization(@RequestParam String activityName) throws InvalidActivityNameException {
@@ -92,7 +74,7 @@ public class InstructorController {
             throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setRole(roleRepository.findByName("INSTRUCTOR"));
-        user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
+        user.setPassword((user.getPassword()));
         if (user.getSpecializations() != null) {
             user.setSpecializations(getActivityList(user.getSpecializations()));
         }
@@ -104,7 +86,7 @@ public class InstructorController {
 
     @PatchMapping(value = "/updatePersonal", consumes = "application/json")
     public void updatePersonal(@RequestBody Instructor instructor) {
-        Instructor currentInstructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Instructor currentInstructor = (Instructor) instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         currentInstructor.setFirstName(instructor.getFirstName());
         currentInstructor.setLastName(instructor.getLastName());
         instructorRepository.save(currentInstructor);
@@ -112,14 +94,14 @@ public class InstructorController {
 
     @PatchMapping(value = "/setAvailabilities", consumes = "application/json")
     public Instructor setAvailabilities(@RequestBody List<City> availabilities) throws InvalidCityNameException {
-        Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Instructor instructor = (Instructor) instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         instructor.setAvailabilities(getCityList(availabilities));
         return instructorRepository.save(instructor);
     }
 
     @PatchMapping(value = "/setSpecializations", consumes = "application/json")
     public Instructor setSpecializations(@RequestBody List<Activity> specializations) throws InvalidActivityNameException {
-        Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Instructor instructor = (Instructor) instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         instructor.setSpecializations(getActivityList(specializations));
         return instructorRepository.save(instructor);
     }

@@ -53,7 +53,7 @@ public class OfferingController {
 
     @GetMapping("/getByInstructor")
     public Iterable<Offering> getOfferingsByInstructor() {
-        Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Instructor instructor = (Instructor) instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         return offeringRepository.findAllByInstructorId(instructor.getId());
     }
 

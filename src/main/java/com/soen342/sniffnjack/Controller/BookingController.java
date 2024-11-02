@@ -45,7 +45,7 @@ public class BookingController {
 
     @PostMapping("/add")
     public Booking addBooking(@RequestParam Long offeringId) throws InvalidOfferingException {
-        Client client = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Client client = (Client) clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         Offering offering = offeringRepository.findById(offeringId).orElse(null);
         if (offering == null) {
             throw new InvalidOfferingException();

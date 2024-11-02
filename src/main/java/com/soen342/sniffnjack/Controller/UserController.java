@@ -4,21 +4,21 @@ import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
 import com.soen342.sniffnjack.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
 
-@RestController
-@RequestMapping("/users")
+@Controller // Use @Controller or @RestController depending on your need
 public class UserController {
-    @Autowired
-    private UserRepository<User> userRepository;
 
-    @GetMapping("/all")
+    @Autowired
+    private UserRepository userRepository;
+
+    // Retrieve all users
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    @GetMapping("/get")
-    public User findUserByEmail(@RequestParam String email) throws UserNotFoundException {
+    // Find a user by email
+    public User findUserByEmail(String email) throws UserNotFoundException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new UserNotFoundException(email);
@@ -26,33 +26,28 @@ public class UserController {
         return user;
     }
 
-    @GetMapping("/firstName")
-    public Iterable<User> findUsersByFirstName(@RequestParam String firstName) {
-        return userRepository.findAllByFirstName(firstName);
-    }
-
-    @GetMapping("/lastName")
-    public Iterable<User> findUsersByLastName(@RequestParam String lastName) {
-        return userRepository.findAllByLastName(lastName);
-    }
-
-    @GetMapping("/fullNameStrict")
-    public Iterable<User> findUsersByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
-        return userRepository.findDistinctByFirstNameAndLastName(firstName, lastName);
-    }
-
-    @GetMapping("/fullNameLoose")
-    public Iterable<User> findUsersByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
-        return userRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
-    }
-
-    // TODO: Add response status to ALL delete methods
-    @DeleteMapping("/delete")
-    public void deleteUser(@RequestParam String email) throws UserNotFoundException {
+    // Delete a user by email
+    public void deleteUser(String email) throws UserNotFoundException {
         User user = findUserByEmail(email);
-        if (user == null) {
-            throw new UserNotFoundException(email);
-        }
         userRepository.delete(user);
+    }
+
+    // Create a new user (POST)
+    public void createUser(User user) {
+        userRepository.save(user); // Assume user object is properly validated before saving
+    }
+
+    // Update an existing user (PUT)
+    public void updateUser(User user) throws UserNotFoundException {
+        // Validate user existence first
+        User existingUser = findUserByEmail(user.getEmail());
+        
+        // Update fields as needed
+        existingUser.setFirstName(user.getFirstName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setPassword(user.getPassword()); // Assuming password update is allowed
+        
+        // Save updated user
+        userRepository.save(existingUser);
     }
 }

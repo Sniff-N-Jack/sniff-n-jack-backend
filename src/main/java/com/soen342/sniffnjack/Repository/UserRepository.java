@@ -5,11 +5,11 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface UserRepository<T extends User> extends CrudRepository<User, Long> {
-    T findByEmail(String email);
-    List<T> findAllByFirstName(String firstName);
-    List<T> findAllByLastName(String lastName);
-    List<T> findDistinctByFirstNameAndLastName(String firstName, String lastName);
-    List<T> findDistinctByFirstNameOrLastName(String firstName, String lastName);
+public interface UserRepository extends CrudRepository<User, Long> {
+    User findByEmail(String email);
+    List<User> findAllByFirstName(String firstName);
+    List<User> findAllByLastName(String lastName);
+    List<User> findDistinctByFirstNameAndLastName(String firstName, String lastName);
+    List<User> findDistinctByFirstNameOrLastName(String firstName, String lastName);
     boolean existsByEmail(String email);
 }

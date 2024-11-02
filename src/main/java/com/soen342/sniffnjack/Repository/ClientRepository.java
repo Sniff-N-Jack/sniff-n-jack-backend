@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ClientRepository extends UserRepository<Client> {
+public interface ClientRepository extends UserRepository {
     @Query("select c from Client c where c.parent = ?1")
     List<Client> findAllByParent(Client parent);
 }
