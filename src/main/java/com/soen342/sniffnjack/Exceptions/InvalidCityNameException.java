@@ -12,6 +12,6 @@ public class InvalidCityNameException extends Exception {
     }
 
     public InvalidCityNameException(List<String> names) {
-        super("Cities with names " + String.join(", ", names) + " do not exist.");
+        super("Cities with names [" + String.join(", ", names) + "] do not exist.");
     }
 }
