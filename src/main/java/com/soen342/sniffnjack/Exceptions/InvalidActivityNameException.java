@@ -12,6 +12,6 @@ public class InvalidActivityNameException extends Exception {
     }
 
     public InvalidActivityNameException(List<String> names) {
-        super("Activities with names " + String.join(", ", names) + " do not exist.");
+        super("Activities with names [" + String.join(", ", names) + "] do not exist.");
     }
 }

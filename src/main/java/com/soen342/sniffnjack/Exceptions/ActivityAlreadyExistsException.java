@@ -11,6 +11,6 @@ public class ActivityAlreadyExistsException extends Exception {
     }
 
     public ActivityAlreadyExistsException(List<String> names) {
-        super("Activities with names " + String.join(", ", names) + " already exist");
+        super("Activities with names [" + String.join(", ", names) + "] already exist");
     }
 }
