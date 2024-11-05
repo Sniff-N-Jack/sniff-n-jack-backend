@@ -6,12 +6,15 @@ import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
 import com.soen342.sniffnjack.Repository.AdminRepository;
 import com.soen342.sniffnjack.Repository.RoleRepository;
+import com.soen342.sniffnjack.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admins")
+@Transactional
 public class AdminController {
     @Autowired
     private AdminRepository adminRepository;
@@ -19,34 +22,17 @@ public class AdminController {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private UserRepository<User> userRepository;
+
     @GetMapping("/all")
-    public Iterable<User> getAllAdmins() {
+    public Iterable<Admin> getAllAdmins() {
         return adminRepository.findAll();
-    }
-
-    @GetMapping("/firstName")
-    public Iterable<Admin> findAdminsByFirstName(@RequestParam String firstName) {
-        return adminRepository.findAllByFirstName(firstName);
-    }
-
-    @GetMapping("/lastName")
-    public Iterable<Admin> findAdminsByLastName(@RequestParam String lastName) {
-        return adminRepository.findAllByLastName(lastName);
-    }
-
-    @GetMapping("/fullNameStrict")
-    public Iterable<Admin> findAdminsByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
-        return adminRepository.findDistinctByFirstNameAndLastName(firstName, lastName);
-    }
-
-    @GetMapping("/fullNameLoose")
-    public Iterable<Admin> findAdminsByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
-        return adminRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
     public Admin addAdmin(@RequestBody Admin user) throws UserAlreadyExistsException {
-        if (adminRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setRole(roleRepository.findByName("ADMIN"));

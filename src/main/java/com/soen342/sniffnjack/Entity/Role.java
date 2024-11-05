@@ -3,7 +3,7 @@ package com.soen342.sniffnjack.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Collection;
 
 @Entity
 @Getter
@@ -21,13 +21,13 @@ public class Role {
 
     @ManyToMany(targetEntity = Privilege.class, fetch = FetchType.EAGER)
     @Setter
-    private List<Privilege> privileges;
+    private Collection<Privilege> privileges;
 
     public Role(@NonNull String name) {
         this.name = name;
     }
 
-    public Role(@NonNull String name, List<Privilege> privileges) {
+    public Role(@NonNull String name, Collection<Privilege> privileges) {
         this.name = name;
         this.privileges = privileges;
     }

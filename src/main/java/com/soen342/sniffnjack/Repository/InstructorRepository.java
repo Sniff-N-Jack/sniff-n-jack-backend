@@ -4,9 +4,11 @@ import com.soen342.sniffnjack.Entity.Activity;
 import com.soen342.sniffnjack.Entity.City;
 import com.soen342.sniffnjack.Entity.Instructor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 public interface InstructorRepository extends UserRepository<Instructor> {
 //    @Query("select i from Instructor i where ?1 in i.specializations")
 //    List<Instructor> findDistinctBySpecializationsContaining(Activity specialization);

@@ -5,6 +5,7 @@ import com.soen342.sniffnjack.Entity.Client;
 import com.soen342.sniffnjack.Entity.User;
 import com.soen342.sniffnjack.Exceptions.InvalidParentCandidateException;
 import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
+import com.soen342.sniffnjack.Repository.UserRepository;
 import com.soen342.sniffnjack.Utils.UserGetter;
 import com.soen342.sniffnjack.Exceptions.InvalidRoleException;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
@@ -12,12 +13,14 @@ import com.soen342.sniffnjack.Repository.ClientRepository;
 import com.soen342.sniffnjack.Repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/clients")
+@Transactional
 public class ClientController {
     @Autowired
     private ClientRepository clientRepository;
@@ -27,6 +30,9 @@ public class ClientController {
 
     @Autowired
     private UserGetter userGetter;
+
+    @Autowired
+    private UserRepository<User> userRepository;
 
     private void checkParent(String email, String role) throws InvalidRoleException, InvalidParentCandidateException {
         if (!role.equals("CLIENT")) {
@@ -39,28 +45,8 @@ public class ClientController {
     }
 
     @GetMapping("/all")
-    public Iterable<User> getAllClients() {
+    public Iterable<Client> getAllClients() {
         return clientRepository.findAll();
-    }
-
-    @GetMapping("/firstName")
-    public Iterable<Client> findClientsByFirstName(@RequestParam String firstName) {
-        return clientRepository.findAllByFirstName(firstName);
-    }
-
-    @GetMapping("/lastName")
-    public Iterable<Client> findClientsByLastName(@RequestParam String lastName) {
-        return clientRepository.findAllByLastName(lastName);
-    }
-
-    @GetMapping("/fullNameStrict")
-    public Iterable<Client> findClientsByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
-        return clientRepository.findDistinctByFirstNameAndLastName(firstName, lastName);
-    }
-
-    @GetMapping("/fullNameLoose")
-    public Iterable<Client> findClientsByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
-        return clientRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 
     @GetMapping("/children")
@@ -71,7 +57,7 @@ public class ClientController {
 
     @PostMapping(value = "/add", consumes = "application/json")
     public Client addClient(@RequestBody Client user) throws UserAlreadyExistsException, UserNotFoundException, InvalidRoleException, InvalidParentCandidateException {
-        if (clientRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setRole(roleRepository.findByName("CLIENT"));

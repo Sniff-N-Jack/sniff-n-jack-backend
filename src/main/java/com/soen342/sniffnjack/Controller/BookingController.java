@@ -9,10 +9,12 @@ import com.soen342.sniffnjack.Repository.ClientRepository;
 import com.soen342.sniffnjack.Repository.OfferingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/bookings")
+@Transactional
 public class BookingController {
     @Autowired
     private BookingRepository bookingRepository;
@@ -50,6 +52,8 @@ public class BookingController {
         if (offering == null) {
             throw new InvalidOfferingException();
         }
+        // TODO: Check if client is already booked for this offering
+        // TODO: Check if offering is full
         Booking booking = new Booking(offering, client);
         return bookingRepository.save(booking);
     }

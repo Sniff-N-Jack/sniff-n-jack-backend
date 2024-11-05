@@ -13,10 +13,12 @@ import com.soen342.sniffnjack.Repository.LocationRepository;
 import com.soen342.sniffnjack.Repository.OfferingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/offerings")
+@Transactional
 public class OfferingController {
     @Autowired
     private OfferingRepository offeringRepository;

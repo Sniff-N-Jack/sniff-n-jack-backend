@@ -61,7 +61,7 @@ public class BasicAuthSecurity {
                             "/takenOfferings/get",
                             "/activities/all",
                             "/instructors/all",
-                            "/instructors/getBySpecialization",
+                            "/instructors/get",
                             "/cities/all"
                     ).permitAll()
                     .requestMatchers(
@@ -71,8 +71,8 @@ public class BasicAuthSecurity {
                             "/offerings/getTaken",
                             "/offerings/add",
                             "/offerings/delete",
-                            "/booking/get",
-                            "/booking/getByClient"
+                            "/bookings/add",
+                            "/bookings/getByClient"
                     ).hasRole("CLIENT")
                     .requestMatchers(
                             "/admins/all",
@@ -88,8 +88,8 @@ public class BasicAuthSecurity {
                             "/offerings/delete",
                             "/offerings/all",
                             "/offerings/getByInstructor",
-                            "/booking/all",
-                            "/booking/getByClient"
+                            "/bookings/all",
+                            "/bookings/getByClient"
                     ).hasRole("ADMIN")
                     .requestMatchers(
                             "/instructors/updatePersonal",
@@ -97,7 +97,7 @@ public class BasicAuthSecurity {
                             "/instructors/setAvailabilities",
                             "/offerings/getAvailable",
                             "/offerings/getByInstructor",
-                            "/booking/getByOffering"
+                            "/bookings/getByOffering"
                     ).hasRole("INSTRUCTOR")
                     .anyRequest().authenticated()
         );

@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 @Data
-public class OfferingOTD {
+public class OfferingDTO {
     private Long id;
     private int totalSpots;
     private int bookedSpots;
@@ -24,7 +24,7 @@ public class OfferingOTD {
     private boolean isTaken;
     private boolean isFull;
 
-    public OfferingOTD(@NonNull Offering offering) {
+    public OfferingDTO(@NonNull Offering offering) {
         this.id = offering.getId();
         this.totalSpots = offering.getTotalSpots();
         this.bookedSpots = offering.getBookedSpots();

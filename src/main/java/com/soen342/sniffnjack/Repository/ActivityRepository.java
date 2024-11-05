@@ -1,11 +1,13 @@
 package com.soen342.sniffnjack.Repository;
 
 import com.soen342.sniffnjack.Entity.Activity;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface ActivityRepository extends CrudRepository<Activity, Long> {
+@Transactional
+public interface ActivityRepository extends JpaRepository<Activity, Long> {
     Activity findByName(String name);
     List<Activity> findDistinctByNameIn(List<String> name);
     void deleteByName(String name);

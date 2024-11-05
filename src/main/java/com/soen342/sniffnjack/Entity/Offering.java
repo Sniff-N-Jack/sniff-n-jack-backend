@@ -1,7 +1,7 @@
 package com.soen342.sniffnjack.Entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.soen342.sniffnjack.OTD.OfferingOTD;
+import com.soen342.sniffnjack.OTD.OfferingDTO;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -105,6 +105,6 @@ public class Offering {
 
     @JsonSerialize
     public String toString() {
-        return (new OfferingOTD(this)).toString();
+        return (new OfferingDTO(this)).toString();
     }
 }

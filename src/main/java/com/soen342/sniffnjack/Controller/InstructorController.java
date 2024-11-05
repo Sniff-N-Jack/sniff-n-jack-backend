@@ -9,18 +9,21 @@ import com.soen342.sniffnjack.Exceptions.InvalidActivityNameException;
 import com.soen342.sniffnjack.Exceptions.InvalidCityNameException;
 import com.soen342.sniffnjack.Exceptions.UserAlreadyExistsException;
 import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
-import com.soen342.sniffnjack.Repository.ActivityRepository;
-import com.soen342.sniffnjack.Repository.CityRepository;
-import com.soen342.sniffnjack.Repository.InstructorRepository;
-import com.soen342.sniffnjack.Repository.RoleRepository;
+import com.soen342.sniffnjack.Repository.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/instructors")
+@Transactional
 public class InstructorController {
     @Autowired
     private InstructorRepository instructorRepository;
@@ -34,8 +37,11 @@ public class InstructorController {
     @Autowired
     private CityRepository cityRepository;
 
+    @Autowired
+    private UserRepository<User> userRepository;
+
     @GetMapping("/all")
-    public Iterable<User> getAllInstructors() {
+    public Iterable<Instructor> getAllInstructors() {
         return instructorRepository.findAll();
     }
 
@@ -46,26 +52,6 @@ public class InstructorController {
             throw new UserNotFoundException(email);
         }
         return user;
-    }
-
-    @GetMapping("/firstName")
-    public Iterable<Instructor> findUsersByFirstName(@RequestParam String firstName) {
-        return instructorRepository.findAllByFirstName(firstName);
-    }
-
-    @GetMapping("/lastName")
-    public Iterable<Instructor> findUsersByLastName(@RequestParam String lastName) {
-        return instructorRepository.findAllByLastName(lastName);
-    }
-
-    @GetMapping("/fullNameStrict")
-    public Iterable<Instructor> findUsersByFullNameStrict(@RequestParam String firstName, @RequestParam String lastName) {
-        return instructorRepository.findDistinctByFirstNameAndLastName(firstName, lastName);
-    }
-
-    @GetMapping("/fullNameLoose")
-    public Iterable<Instructor> findUsersByFullNameLoose(@RequestParam String firstName, @RequestParam String lastName) {
-        return instructorRepository.findDistinctByFirstNameOrLastName(firstName, lastName);
     }
 
 //    @GetMapping("/getBySpecialization")
@@ -88,16 +74,18 @@ public class InstructorController {
 
     @PostMapping(value = "/add", consumes = "application/json")
     public Instructor addInstructor(@RequestBody Instructor user) throws UserAlreadyExistsException, InvalidCityNameException, InvalidActivityNameException {
-        if (instructorRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setRole(roleRepository.findByName("INSTRUCTOR"));
         user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
         if (user.getSpecializations() != null) {
-            user.setSpecializations(getActivityList(user.getSpecializations()));
+            user.setSpecializations(
+                    getActivityList(user.getSpecializations().stream().map(Activity::getName).collect(Collectors.toCollection(ArrayList::new))));
         }
         if (user.getAvailabilities() != null) {
-            user.setAvailabilities(getCityList(user.getAvailabilities()));
+            user.setAvailabilities(
+                    getCityList(user.getAvailabilities().stream().map(City::getName).collect(Collectors.toCollection(ArrayList::new))));
         }
         return instructorRepository.save(user);
     }
@@ -107,37 +95,46 @@ public class InstructorController {
         Instructor currentInstructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         currentInstructor.setFirstName(instructor.getFirstName());
         currentInstructor.setLastName(instructor.getLastName());
+        currentInstructor.setPhone(instructor.getPhone());
         instructorRepository.save(currentInstructor);
     }
 
-    @PatchMapping(value = "/setAvailabilities", consumes = "application/json")
-    public Instructor setAvailabilities(@RequestBody List<City> availabilities) throws InvalidCityNameException {
+    @PatchMapping(value = "/setAvailabilities")
+    public Instructor setAvailabilities(@RequestParam ArrayList<String> names) throws InvalidCityNameException {
         Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        instructor.setAvailabilities(getCityList(availabilities));
+        instructor.setAvailabilities(getCityList(names));
         return instructorRepository.save(instructor);
     }
 
-    @PatchMapping(value = "/setSpecializations", consumes = "application/json")
-    public Instructor setSpecializations(@RequestBody List<Activity> specializations) throws InvalidActivityNameException {
+    @PatchMapping(value = "/setSpecializations")
+    public Instructor setSpecializations(@RequestParam ArrayList<String> names) throws InvalidActivityNameException {
         Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        instructor.setSpecializations(getActivityList(specializations));
+        instructor.setSpecializations(getActivityList(names));
         return instructorRepository.save(instructor);
     }
 
-    private List<City> getCityList(List<City> uncheckedCityList) throws InvalidCityNameException {
-        List<City> cityList = uncheckedCityList.stream().map(city -> cityRepository.findByName(city.getName())).toList();
+    private ArrayList<City> getCityList(ArrayList<String> uncheckedCityList) throws InvalidCityNameException {
+        ArrayList<City> cityList = uncheckedCityList.stream()
+                .map(name -> cityRepository.findByName(name)).filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new));
         // If any city is not found, throw an exception
-        List<String> invalidCityNames = uncheckedCityList.stream().map(City::getName).filter(name -> cityList.stream().noneMatch(city -> city.getName().equals(name))).toList();
+        ArrayList<String> invalidCityNames = uncheckedCityList.stream()
+                .filter(name -> cityList.stream().noneMatch(city -> city.getName().equals(name)))
+                .collect(Collectors.toCollection(ArrayList::new));
         if (!invalidCityNames.isEmpty()) {
             throw new InvalidCityNameException(invalidCityNames);
         }
         return cityList;
     }
 
-    private List<Activity> getActivityList(List<Activity> uncheckedActivityList) throws InvalidActivityNameException {
-        List<Activity> activityList = uncheckedActivityList.stream().map(activity -> activityRepository.findByName(activity.getName())).toList();
+    private ArrayList<Activity> getActivityList(ArrayList<String> uncheckedActivityList) throws InvalidActivityNameException {
+        ArrayList<Activity> activityList = uncheckedActivityList.stream()
+                .map(name -> activityRepository.findByName(name)).filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new));
         // If any activity is not found, throw an exception
-        List<String> invalidActivityNames = uncheckedActivityList.stream().map(Activity::getName).filter(name -> activityList.stream().noneMatch(activity -> activity.getName().equals(name))).toList();
+        ArrayList<String> invalidActivityNames = uncheckedActivityList.stream()
+                .filter(name -> activityList.stream().noneMatch(activity -> activity.getName().equals(name)))
+                .collect(Collectors.toCollection(ArrayList::new));
         if (!invalidActivityNames.isEmpty()) {
             throw new InvalidActivityNameException(invalidActivityNames);
         }
