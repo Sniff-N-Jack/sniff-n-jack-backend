@@ -27,7 +27,7 @@ public class Offering {
     @Min(1)
     private int totalSpots;
 
-    @Formula("(SELECT COUNT(*) FROM Booking b WHERE b.offering_id = id)")
+    @Formula("(SELECT COUNT(*) FROM booking b WHERE b.offering_id = id)")
     private int bookedSpots;
 
     @NonNull
