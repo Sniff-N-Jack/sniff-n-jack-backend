@@ -12,6 +12,6 @@ public class CityAlreadyExistsException extends Exception {
     }
 
     public CityAlreadyExistsException(List<String> names) {
-        super("Cities with names " + String.join(", ", names) + " already exist.");
+        super("Cities with names [" + String.join(", ", names) + "] already exist.");
     }
 }

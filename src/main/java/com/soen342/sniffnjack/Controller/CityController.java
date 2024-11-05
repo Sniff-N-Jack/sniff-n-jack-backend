@@ -1,19 +1,19 @@
 package com.soen342.sniffnjack.Controller;
 
-import com.soen342.sniffnjack.Entity.Activity;
 import com.soen342.sniffnjack.Entity.City;
-import com.soen342.sniffnjack.Exceptions.ActivityAlreadyExistsException;
 import com.soen342.sniffnjack.Exceptions.CityAlreadyExistsException;
-import com.soen342.sniffnjack.Exceptions.InvalidActivityNameException;
 import com.soen342.sniffnjack.Exceptions.InvalidCityNameException;
 import com.soen342.sniffnjack.Repository.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/cities")
+@Transactional
 public class CityController {
     @Autowired
     private CityRepository cityRepository;
@@ -24,8 +24,12 @@ public class CityController {
     }
 
     @GetMapping("/get")
-    public City findCityByName(@RequestParam String name) {
-        return cityRepository.findByName(name);
+    public City findCityByName(@RequestParam String name) throws InvalidCityNameException {
+        City city = cityRepository.findByName(name);
+        if (city == null) {
+            throw new InvalidCityNameException(name);
+        }
+        return city;
     }
 
     @PostMapping("/add")
@@ -36,10 +40,10 @@ public class CityController {
         return cityRepository.save(new City(name));
     }
 
-    @PostMapping(value ="/addMultiple", consumes = "application/json")
-    public Iterable<City> addMultipleCities(@RequestBody List<City> cities) throws Exception{
-        getCityList(cities, true);
-        return cityRepository.saveAll(cities);
+    @PostMapping(value ="/addMultiple")
+    public Iterable<City> addMultipleCities(@RequestParam List<String> names) throws Exception{
+        getCityList(names, true);
+        return cityRepository.saveAll(names.stream().map(City::new).toList());
     }
 
     @DeleteMapping("/delete")
@@ -50,19 +54,32 @@ public class CityController {
         cityRepository.deleteByName(name);
     }
 
-    @DeleteMapping(value = "/deleteMultiple", consumes = "application/json")
-    public void deleteMultipleCities(@RequestBody List<City> cities) throws Exception {
-        cities = getCityList(cities, false);
+    @DeleteMapping(value = "/deleteMultiple")
+    public void deleteMultipleCities(@RequestParam List<String> names) throws Exception {
+        List<City> cities = getCityList(names, false);
         cityRepository.deleteAll(cities);
     }
 
-    private List<City> getCityList(List<City> uncheckedCityList, boolean adding) throws Exception {
-        List<City> cityList = uncheckedCityList.stream().map(city -> cityRepository.findByName(city.getName())).toList();
+    @PatchMapping("/update")
+    public City updateCity(@RequestParam String oldName, @RequestParam String newName) throws InvalidCityNameException, CityAlreadyExistsException {
+        if (!cityRepository.existsByName(oldName)) {
+            throw new InvalidCityNameException(oldName);
+        }
+        if (cityRepository.existsByName(newName)) {
+            throw new CityAlreadyExistsException(newName);
+        }
+        City city = cityRepository.findByName(oldName);
+        city.setName(newName);
+        return cityRepository.save(city);
+    }
+
+    private List<City> getCityList(List<String> uncheckedCityList, boolean adding) throws Exception {
+        List<City> cityList = uncheckedCityList.stream().map(city -> cityRepository.findByName(city)).filter(Objects::nonNull).toList();
         if (adding && !cityList.isEmpty())
             throw new CityAlreadyExistsException(cityList.stream().map(City::getName).toList());
         else if (!adding) {
-            List<String> invalidActivityNames = uncheckedCityList.stream().map(City::getName).filter(name -> cityList.stream().noneMatch(city -> city.getName().equals(name))).toList();
-            if (!invalidActivityNames.isEmpty()) throw new InvalidCityNameException(invalidActivityNames);
+            List<String> invalidACityNames = uncheckedCityList.stream().filter(name -> cityList.stream().noneMatch(city -> city.getName().equals(name))).toList();
+            if (!invalidACityNames.isEmpty()) throw new InvalidCityNameException(invalidACityNames);
         }
 
         return cityList;

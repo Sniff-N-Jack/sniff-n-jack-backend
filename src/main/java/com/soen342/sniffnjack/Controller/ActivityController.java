@@ -5,12 +5,15 @@ import com.soen342.sniffnjack.Exceptions.ActivityAlreadyExistsException;
 import com.soen342.sniffnjack.Exceptions.InvalidActivityNameException;
 import com.soen342.sniffnjack.Repository.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/activities")
+@Transactional
 public class ActivityController {
     @Autowired
     private ActivityRepository activityRepository;
@@ -28,10 +31,10 @@ public class ActivityController {
         return activityRepository.save(new Activity(name));
     }
 
-    @PostMapping(value = "/addMultiple", consumes = "application/json")
-    public Iterable<Activity> addMultipleActivities(@RequestBody List<Activity> activities) throws Exception {
-        getActivityList(activities, true);
-        return activityRepository.saveAll(activities);
+    @PostMapping(value = "/addMultiple")
+    public Iterable<Activity> addMultipleActivities(@RequestParam List<String> names) throws Exception {
+        getActivityList(names, true);
+        return activityRepository.saveAll(names.stream().map(Activity::new).toList());
     }
 
     @DeleteMapping("/delete")
@@ -42,18 +45,31 @@ public class ActivityController {
         activityRepository.deleteByName(name);
     }
 
-    @DeleteMapping(value = "/deleteMultiple", consumes = "application/json")
-    public void deleteMultipleActivities(@RequestBody List<Activity> activities) throws Exception {
-        activities = getActivityList(activities, false);
+    @DeleteMapping(value = "/deleteMultiple")
+    public void deleteMultipleActivities(@RequestParam List<String> names) throws Exception {
+        List<Activity> activities = getActivityList(names, false);
         activityRepository.deleteAll(activities);
     }
 
-    private List<Activity> getActivityList(List<Activity> uncheckedActivityList, boolean adding) throws Exception {
-        List<Activity> activityList = uncheckedActivityList.stream().map(activity -> activityRepository.findByName(activity.getName())).toList();
+    @PatchMapping("/update")
+    public Activity updateActivity(@RequestParam String oldName, @RequestParam String newName) throws Exception {
+        if (activityRepository.existsByName(newName)) {
+            throw new ActivityAlreadyExistsException(newName);
+        }
+        Activity activity = activityRepository.findByName(oldName);
+        if (activity == null) {
+            throw new InvalidActivityNameException(oldName);
+        }
+        activity.setName(newName);
+        return activityRepository.save(activity);
+    }
+
+    private List<Activity> getActivityList(List<String> uncheckedActivityList, boolean adding) throws Exception {
+        List<Activity> activityList = uncheckedActivityList.stream().map(activity -> activityRepository.findByName(activity)).filter(Objects::nonNull).toList();
         if (adding && !activityList.isEmpty())
             throw new ActivityAlreadyExistsException(activityList.stream().map(Activity::getName).toList());
         else if (!adding) {
-            List<String> invalidActivityNames = uncheckedActivityList.stream().map(Activity::getName).filter(name -> activityList.stream().noneMatch(activity -> activity.getName().equals(name))).toList();
+            List<String> invalidActivityNames = uncheckedActivityList.stream().filter(name -> activityList.stream().noneMatch(activity -> activity.getName().equals(name))).toList();
             if (!invalidActivityNames.isEmpty()) throw new InvalidActivityNameException(invalidActivityNames);
         }
 
