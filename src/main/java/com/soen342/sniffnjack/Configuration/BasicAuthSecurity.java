@@ -11,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -47,64 +49,80 @@ public class BasicAuthSecurity {
         return customAuthenticationProvider;
     }
 
+    // @Bean
+    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    //     http.httpBasic(Customizer.withDefaults());
+    //     http.csrf(AbstractHttpConfigurer::disable);
+    //     http.authorizeHttpRequests(requests ->
+    //         requests.requestMatchers(
+    //                         "/v3/**",
+    //                         "/swagger-ui/**",
+    //                         "/clients/add",
+    //                         "/instructors/add",
+    //                         "/takenOfferings/all",
+    //                         "/takenOfferings/get",
+    //                         "/activities/all",
+    //                         "/instructors/all",
+    //                         "/instructors/getBySpecialization",
+    //                         "/cities/all"
+    //                 ).permitAll()
+    //                 .requestMatchers(
+    //                         "/clients/updatePersonal",
+    //                         "/clients/addParent",
+    //                         "/clients/removeParent",
+    //                         "/offerings/getTaken",
+    //                         "/offerings/add",
+    //                         "/offerings/delete",
+    //                         "/booking/get",
+    //                         "/booking/getByClient"
+    //                 ).hasRole("CLIENT")
+    //                 .requestMatchers(
+    //                         "/admins/all",
+    //                         "/users/delete",
+    //                         "/admins/add",
+    //                         "/admins/updatePersonal",
+    //                         "activities/**",
+    //                         "/instructors/getByAvailability",
+    //                         "/cities/**",
+    //                         "/locations/**",
+    //                         "/offerings/add",
+    //                         "/offerings/update",
+    //                         "/offerings/delete",
+    //                         "/offerings/all",
+    //                         "/offerings/getByInstructor",
+    //                         "/booking/all",
+    //                         "/booking/getByClient"
+    //                 ).hasRole("ADMIN")
+    //                 .requestMatchers(
+    //                         "/instructors/updatePersonal",
+    //                         "/instructors/setSpecializations",
+    //                         "/instructors/setAvailabilities",
+    //                         "/offerings/getAvailable",
+    //                         "/offerings/getByInstructor",
+    //                         "/booking/getByOffering"
+    //                 ).hasRole("INSTRUCTOR")
+    //                 .anyRequest().authenticated()
+    //     );
+    //     http.sessionManagement(sessionManagement ->
+    //         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+    //     );
+
+    //     return http.build();
+    // }
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.httpBasic(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
-        http.authorizeHttpRequests(requests ->
-            requests.requestMatchers(
-                            "/v3/**",
-                            "/swagger-ui/**",
-                            "/clients/add",
-                            "/instructors/add",
-                            "/takenOfferings/all",
-                            "/takenOfferings/get",
-                            "/activities/all",
-                            "/instructors/all",
-                            "/instructors/getBySpecialization",
-                            "/cities/all"
-                    ).permitAll()
-                    .requestMatchers(
-                            "/clients/updatePersonal",
-                            "/clients/addParent",
-                            "/clients/removeParent",
-                            "/offerings/getTaken",
-                            "/offerings/add",
-                            "/offerings/delete",
-                            "/booking/get",
-                            "/booking/getByClient"
-                    ).hasRole("CLIENT")
-                    .requestMatchers(
-                            "/admins/all",
-                            "/users/delete",
-                            "/admins/add",
-                            "/admins/updatePersonal",
-                            "activities/**",
-                            "/instructors/getByAvailability",
-                            "/cities/**",
-                            "/locations/**",
-                            "/offerings/add",
-                            "/offerings/update",
-                            "/offerings/delete",
-                            "/offerings/all",
-                            "/offerings/getByInstructor",
-                            "/booking/all",
-                            "/booking/getByClient"
-                    ).hasRole("ADMIN")
-                    .requestMatchers(
-                            "/instructors/updatePersonal",
-                            "/instructors/setSpecializations",
-                            "/instructors/setAvailabilities",
-                            "/offerings/getAvailable",
-                            "/offerings/getByInstructor",
-                            "/booking/getByOffering"
-                    ).hasRole("INSTRUCTOR")
-                    .anyRequest().authenticated()
-        );
-        http.sessionManagement(sessionManagement ->
-            sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
-        return http.build();
-    }
+        http.csrf(AbstractHttpConfigurer::disable);    http.cors(cors -> {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        cors.configurationSource(source);
+    });
+    http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    return http.build();
+}
 }
