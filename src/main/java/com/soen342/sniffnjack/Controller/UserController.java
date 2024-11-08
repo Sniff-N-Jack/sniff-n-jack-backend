@@ -20,6 +20,11 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) throws UserNotFoundException {
+        return userRepository.getUserById(id);
+    }
+
     @GetMapping("/get")
     public User findUserByEmail(@RequestParam String email) throws UserNotFoundException {
         User user = userRepository.findByEmail(email);

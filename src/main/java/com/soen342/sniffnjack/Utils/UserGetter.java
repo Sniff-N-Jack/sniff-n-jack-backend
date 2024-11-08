@@ -51,6 +51,19 @@ public class UserGetter {
         return getUsers().stream().filter(u -> u.getFirstName().contains(firstName) || u.getLastName().contains(lastName)).toList();
     }
 
+    public User getUserById(Long id) throws UserNotFoundException {
+        User user = getUsers().stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    
+        if (user == null) {
+            throw new UserNotFoundException("User not found with id: " + id);
+        }
+    
+        return user;
+    }
+
     public List<User> getUsers() {
         List<User> users = new ArrayList<>();
         users.addAll(adminRepository.findAll().stream().toList());

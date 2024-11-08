@@ -90,28 +90,66 @@ public class InstructorController {
         return instructorRepository.save(user);
     }
 
-    @PatchMapping(value = "/updatePersonal", consumes = "application/json")
-    public void updatePersonal(@RequestBody Instructor instructor) {
-        Instructor currentInstructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        currentInstructor.setFirstName(instructor.getFirstName());
-        currentInstructor.setLastName(instructor.getLastName());
-        currentInstructor.setPhone(instructor.getPhone());
-        instructorRepository.save(currentInstructor);
+    // @PatchMapping(value = "/updatePersonal", consumes = "application/json")
+    // public void updatePersonal(@RequestBody Instructor instructor) {
+    //     Instructor currentInstructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    //     currentInstructor.setFirstName(instructor.getFirstName());
+    //     currentInstructor.setLastName(instructor.getLastName());
+    //     currentInstructor.setPhone(instructor.getPhone());
+    //     instructorRepository.save(currentInstructor);
+    // }
+
+    @PatchMapping(value = "/updatePersonal/{instructorId}", consumes = "application/json")
+public void updatePersonal(@PathVariable Long instructorId, @RequestBody Instructor instructor) {
+    Instructor currentInstructor = (Instructor) userRepository.getUserById(instructorId);
+    if (currentInstructor == null) {
+        throw new RuntimeException("Instructor not found");
+    }
+    
+    currentInstructor.setFirstName(instructor.getFirstName());
+    currentInstructor.setLastName(instructor.getLastName());
+    currentInstructor.setPhone(instructor.getPhone());
+    userRepository.save(currentInstructor);
+}
+
+
+    // @PatchMapping(value = "/setAvailabilities")
+    // public Instructor setAvailabilities(@RequestParam ArrayList<String> names) throws InvalidCityNameException {
+    //     Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    //     instructor.setAvailabilities(getCityList(names));
+    //     return instructorRepository.save(instructor);
+    // }
+
+    @PatchMapping(value = "/setAvailabilities/{instructorId}")
+public Instructor setAvailabilities(@PathVariable Long instructorId, @RequestParam ArrayList<String> names) throws InvalidCityNameException {
+    Instructor instructor = (Instructor) userRepository.getUserById(instructorId);
+    if (instructor == null) {
+        throw new RuntimeException("Instructor not found");
     }
 
-    @PatchMapping(value = "/setAvailabilities")
-    public Instructor setAvailabilities(@RequestParam ArrayList<String> names) throws InvalidCityNameException {
-        Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        instructor.setAvailabilities(getCityList(names));
-        return instructorRepository.save(instructor);
+    instructor.setAvailabilities(getCityList(names));
+    return userRepository.save(instructor);
+}
+
+
+    // @PatchMapping(value = "/setSpecializations")
+    // public Instructor setSpecializations(@RequestParam ArrayList<String> names) throws InvalidActivityNameException {
+    //     Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    //     instructor.setSpecializations(getActivityList(names));
+    //     return instructorRepository.save(instructor);
+    // }
+
+    @PatchMapping(value = "/setSpecializations/{instructorId}")
+public Instructor setSpecializations(@PathVariable Long instructorId, @RequestParam ArrayList<String> names) throws InvalidActivityNameException {
+    Instructor instructor = (Instructor) userRepository.getUserById(instructorId);
+    if (instructor == null) {
+        throw new RuntimeException("Instructor not found");
     }
 
-    @PatchMapping(value = "/setSpecializations")
-    public Instructor setSpecializations(@RequestParam ArrayList<String> names) throws InvalidActivityNameException {
-        Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        instructor.setSpecializations(getActivityList(names));
-        return instructorRepository.save(instructor);
-    }
+    instructor.setSpecializations(getActivityList(names));
+    return userRepository.save(instructor);
+}
+
 
     private ArrayList<City> getCityList(ArrayList<String> uncheckedCityList) throws InvalidCityNameException {
         ArrayList<City> cityList = uncheckedCityList.stream()
