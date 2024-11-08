@@ -100,7 +100,8 @@ public class BasicAuthSecurity {
                             "/instructors/setAvailabilities",
                             "/offerings/getAvailable",
                             "/offerings/getByInstructor",
-                            "/bookings/getByOffering"
+                            "/bookings/getByOffering",
+                            "/offerings/take"
                     ).hasRole("INSTRUCTOR")
                     .anyRequest().authenticated()
         );

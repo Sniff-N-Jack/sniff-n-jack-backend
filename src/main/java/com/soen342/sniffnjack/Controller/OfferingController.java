@@ -6,6 +6,7 @@ import com.soen342.sniffnjack.Entity.Location;
 import com.soen342.sniffnjack.Entity.Offering;
 import com.soen342.sniffnjack.Exceptions.InvalidActivityNameException;
 import com.soen342.sniffnjack.Exceptions.InvalidLocationException;
+import com.soen342.sniffnjack.Exceptions.InvalidOfferingException;
 import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
 import com.soen342.sniffnjack.Repository.ActivityRepository;
 import com.soen342.sniffnjack.Repository.InstructorRepository;
@@ -78,6 +79,17 @@ public class OfferingController {
     @PatchMapping("/update")
     public Offering updateOffering(@RequestBody Offering offering) throws InvalidActivityNameException, InvalidLocationException {
         checkOffering(offering);
+        return offeringRepository.save(offering);
+    }
+
+    @PatchMapping("/take")
+    public Offering takeOffering(@RequestParam Long id) throws InvalidOfferingException {
+        Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Offering offering = offeringRepository.findById(id).orElse(null);
+        if (offering == null) {
+            throw new InvalidOfferingException();
+        }
+        offering.setInstructor(instructor);
         return offeringRepository.save(offering);
     }
 
