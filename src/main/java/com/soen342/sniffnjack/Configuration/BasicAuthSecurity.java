@@ -64,9 +64,7 @@ public class BasicAuthSecurity {
                             "/instructors/all",
                             "/instructors/get",
                             "/cities/all",
-                            "/users/login"
-                    ).permitAll()
-                    .requestMatchers(
+                            "/users/login",
                             "/clients/updatePersonal",
                             "/clients/addParent",
                             "/clients/removeParent",
@@ -74,9 +72,7 @@ public class BasicAuthSecurity {
                             "/offerings/add",
                             "/offerings/delete",
                             "/bookings/add",
-                            "/bookings/getByClient"
-                    ).permitAll()
-                    .requestMatchers(
+                            "/bookings/getByClient",
                             "/admins/all",
                             "/users/delete",
                             "/admins/add",
@@ -91,17 +87,18 @@ public class BasicAuthSecurity {
                             "/offerings/all",
                             "/offerings/getByInstructor",
                             "/bookings/all",
-                            "/bookings/getByClient"
-                    ).permitAll()
-                    .requestMatchers(
+                            "/bookings/getByClient",
                             "/instructors/updatePersonal",
                             "/instructors/setSpecializations",
                             "/instructors/setAvailabilities",
                             "/offerings/getAvailable",
                             "/offerings/getByInstructor",
-                            "/bookings/getByOffering"
+                            "/bookings/getByOffering",
+                            "/users/all",
+                            "clients/all",
+                            "instructors/all"
                     ).permitAll()
-                    .anyRequest().authenticated()
+                    .anyRequest().permitAll()
         );
         http.sessionManagement(sessionManagement ->
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

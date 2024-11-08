@@ -29,17 +29,7 @@ public class UserController {
         return user;
     }
 
-    @GetMapping("/login")
-    public User login(@RequestParam String email, @RequestParam String password) throws UserNotFoundException, WrongPasswordException {
-        User user = findUserByEmail(email);
-        if (user == null) {
-            throw new UserNotFoundException(email);
-        }
-        if (!passwordEncoder().matches(password, user.getPassword())) {
-            throw new WrongPasswordException();
-        }
-        return user;
-    }
+
 
     @DeleteMapping("/delete")
     public void deleteUser(@RequestParam String email) throws UserNotFoundException {
