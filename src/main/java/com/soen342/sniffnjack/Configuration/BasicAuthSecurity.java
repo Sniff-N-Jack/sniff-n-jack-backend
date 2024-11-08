@@ -91,7 +91,8 @@ public class BasicAuthSecurity {
                             "/offerings/all",
                             "/offerings/getByInstructor",
                             "/bookings/all",
-                            "/bookings/getByClient"
+                            "/bookings/getByClient",
+                            "/users/all"
                     ).hasRole("ADMIN")
                     .requestMatchers(
                             "/instructors/updatePersonal",
