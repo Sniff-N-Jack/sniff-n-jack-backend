@@ -52,7 +52,8 @@ public class BasicAuthSecurity {
         http.httpBasic(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests ->
-            requests.requestMatchers(
+            requests
+                    .requestMatchers(
                             "/v3/**",
                             "/swagger-ui/**",
                             "/clients/add",
@@ -62,7 +63,8 @@ public class BasicAuthSecurity {
                             "/activities/all",
                             "/instructors/all",
                             "/instructors/get",
-                            "/cities/all"
+                            "/cities/all",
+                            "/users/login"
                     ).permitAll()
                     .requestMatchers(
                             "/clients/updatePersonal",
