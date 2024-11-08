@@ -41,7 +41,6 @@ public class UserController {
         return user;
     }
 
-    // TODO: Add response status to ALL delete methods
     @DeleteMapping("/delete")
     public void deleteUser(@RequestParam String email) throws UserNotFoundException {
         User user = findUserByEmail(email);

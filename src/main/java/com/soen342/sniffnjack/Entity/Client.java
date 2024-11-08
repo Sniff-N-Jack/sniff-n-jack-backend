@@ -31,6 +31,10 @@ public class Client extends User {
             referencedColumnName = "id")
     private Client parent;
 
+    public boolean isMinor() {
+        return age < 18;
+    }
+
     public Client() {
         super();
         role = new Role(CLIENT_ROLE);

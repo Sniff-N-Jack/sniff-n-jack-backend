@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import org.hibernate.annotations.Formula;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collection;
 
 @Entity
 @Getter

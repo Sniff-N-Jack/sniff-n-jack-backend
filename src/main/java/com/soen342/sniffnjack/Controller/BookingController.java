@@ -3,7 +3,7 @@ package com.soen342.sniffnjack.Controller;
 import com.soen342.sniffnjack.Entity.Booking;
 import com.soen342.sniffnjack.Entity.Client;
 import com.soen342.sniffnjack.Entity.Offering;
-import com.soen342.sniffnjack.Exceptions.InvalidOfferingException;
+import com.soen342.sniffnjack.Exceptions.*;
 import com.soen342.sniffnjack.Repository.BookingRepository;
 import com.soen342.sniffnjack.Repository.ClientRepository;
 import com.soen342.sniffnjack.Repository.OfferingRepository;
@@ -46,14 +46,39 @@ public class BookingController {
     }
 
     @PostMapping("/add")
-    public Booking addBooking(@RequestParam Long offeringId) throws InvalidOfferingException {
-        Client client = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public Booking addBooking(@RequestParam Long offeringId, @RequestParam Long clientID) throws
+            InvalidOfferingException, UserNotFoundException, OfferingFullException, ClientAlreadyBookedOfferingException, BookingRequiresParentException, BookingForOtherUserException {
+        Client client = clientRepository.findById(clientID).orElse(null);
+        if (client == null) {
+            throw new UserNotFoundException(clientID);
+        }
+
+        // Check if client is a minor
+        if (client.isMinor()) {
+            Client loggedInClient = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            if (client == loggedInClient) {
+                throw new BookingRequiresParentException();
+            }
+            if (loggedInClient != client.getParent()) {
+                throw new BookingForOtherUserException();
+            }
+        }
+
         Offering offering = offeringRepository.findById(offeringId).orElse(null);
         if (offering == null) {
             throw new InvalidOfferingException();
         }
-        // TODO: Check if client is already booked for this offering
-        // TODO: Check if offering is full
+
+        // Check if offering is full
+        if (offering.isFull()) {
+            throw new OfferingFullException();
+        }
+
+        // Check if client has already booked this offering
+        if (bookingRepository.findAllByClientId(clientID).stream().anyMatch(booking -> booking.getOffering().getId().equals(offeringId))) {
+            throw new ClientAlreadyBookedOfferingException();
+        }
+
         Booking booking = new Booking(offering, client);
         return bookingRepository.save(booking);
     }

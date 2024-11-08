@@ -9,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"offering_id", "client_id"}))
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
