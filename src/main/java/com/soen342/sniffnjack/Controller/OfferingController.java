@@ -46,7 +46,6 @@ public class OfferingController {
 
     @PatchMapping("/update")
     public Offering updateOffering(@RequestBody Offering offering) throws InvalidActivityNameException, InvalidLocationException {
-        checkOffering(offering);
         return offeringRepository.save(offering);
     }
 
