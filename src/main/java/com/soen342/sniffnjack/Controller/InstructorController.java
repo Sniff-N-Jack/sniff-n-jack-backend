@@ -54,24 +54,6 @@ public class InstructorController {
         return user;
     }
 
-//    @GetMapping("/getBySpecialization")
-//    public Iterable<Instructor> findInstructorsBySpecialization(@RequestParam String activityName) throws InvalidActivityNameException {
-//        Activity specialization = activityRepository.findByName(activityName);
-//        if (specialization == null) {
-//            throw new InvalidActivityNameException(activityName);
-//        }
-//        return instructorRepository.findDistinctBySpecializationsContaining(specialization);
-//    }
-//
-//    @GetMapping("/getByAvailability")
-//    public Iterable<Instructor> findInstructorsByAvailability(@RequestParam String cityName) throws InvalidCityNameException {
-//        City availability = cityRepository.findByName(cityName);
-//        if (availability == null) {
-//            throw new InvalidCityNameException(cityName);
-//        }
-//        return instructorRepository.findDistinctByAvailabilitiesContaining(availability);
-//    }
-
     @PostMapping(value = "/add", consumes = "application/json")
     public Instructor addInstructor(@RequestBody Instructor user) throws UserAlreadyExistsException, InvalidCityNameException, InvalidActivityNameException {
         if (userRepository.existsByEmail(user.getEmail())) {

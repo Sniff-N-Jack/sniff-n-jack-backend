@@ -9,6 +9,5 @@ import java.util.List;
 @Transactional
 public interface OfferingRepository extends JpaRepository<Offering, Long> {
     List<Offering> findAllByInstructorId(Long instructorId);
-    List<Offering> findAllByInstructorIsNull();
-    List<Offering> findAllByInstructorIsNotNull();
+    Offering findByLessonId(Long lessonId);
 }

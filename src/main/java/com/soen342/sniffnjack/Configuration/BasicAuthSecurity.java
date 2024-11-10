@@ -52,53 +52,7 @@ public class BasicAuthSecurity {
         http.httpBasic(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests ->
-            requests
-                    .requestMatchers(
-                            "/v3/**",
-                            "/swagger-ui/**",
-                            "/clients/add",
-                            "/instructors/add",
-                            "/takenOfferings/all",
-                            "/takenOfferings/get",
-                            "/activities/all",
-                            "/instructors/all",
-                            "/instructors/get",
-                            "/cities/all",
-                            "/users/login",
-                            "/clients/updatePersonal",
-                            "/clients/addParent",
-                            "/clients/removeParent",
-                            "/offerings/getTaken",
-                            "/offerings/add",
-                            "/offerings/delete",
-                            "/bookings/add",
-                            "/bookings/getByClient",
-                            "/admins/all",
-                            "/users/delete",
-                            "/admins/add",
-                            "/admins/updatePersonal",
-                            "activities/**",
-                            "/instructors/getByAvailability",
-                            "/cities/**",
-                            "/locations/**",
-                            "/offerings/add",
-                            "/offerings/update",
-                            "/offerings/delete",
-                            "/offerings/all",
-                            "/offerings/getByInstructor",
-                            "/bookings/all",
-                            "/bookings/getByClient",
-                            "/instructors/updatePersonal",
-                            "/instructors/setSpecializations",
-                            "/instructors/setAvailabilities",
-                            "/offerings/getAvailable",
-                            "/offerings/getByInstructor",
-                            "/bookings/getByOffering",
-                            "/users/all",
-                            "clients/all",
-                            "instructors/all"
-                    ).permitAll()
-                    .anyRequest().permitAll()
+            requests.anyRequest().permitAll()
         );
         http.sessionManagement(sessionManagement ->
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

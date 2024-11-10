@@ -1,17 +1,8 @@
 package com.soen342.sniffnjack.Controller;
 
-import com.soen342.sniffnjack.Entity.Activity;
-import com.soen342.sniffnjack.Entity.Instructor;
-import com.soen342.sniffnjack.Entity.Location;
-import com.soen342.sniffnjack.Entity.Offering;
-import com.soen342.sniffnjack.Exceptions.InvalidActivityNameException;
-import com.soen342.sniffnjack.Exceptions.InvalidLocationException;
-import com.soen342.sniffnjack.Exceptions.InvalidOfferingException;
-import com.soen342.sniffnjack.Exceptions.UserNotFoundException;
-import com.soen342.sniffnjack.Repository.ActivityRepository;
-import com.soen342.sniffnjack.Repository.InstructorRepository;
-import com.soen342.sniffnjack.Repository.LocationRepository;
-import com.soen342.sniffnjack.Repository.OfferingRepository;
+import com.soen342.sniffnjack.Entity.*;
+import com.soen342.sniffnjack.Exceptions.*;
+import com.soen342.sniffnjack.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,21 +19,7 @@ public class OfferingController {
     private InstructorRepository instructorRepository;
 
     @Autowired
-    private ActivityRepository activityRepository;
-
-    private void checkOffering(Offering offering) throws InvalidActivityNameException, InvalidLocationException {
-        if (offering.getActivity().getId() == null) {
-            Activity activity = activityRepository.findByName(offering.getActivity().getName());
-            if (activity == null) {
-                throw new InvalidActivityNameException(offering.getActivity().getName());
-            }
-            offering.setActivity(activity);
-        }
-
-        if (offering.getLocation().getId() == null) {
-            throw new InvalidLocationException();
-        }
-    }
+    private LessonRepository lessonRepository;
 
     @GetMapping("/all")
     public Iterable<Offering> getAllOfferings() {
@@ -54,26 +31,17 @@ public class OfferingController {
         return offeringRepository.findById(id).orElse(null);
     }
 
-    @GetMapping("/getByInstructor")
-    public Iterable<Offering> getOfferingsByInstructor() {
-        Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        return offeringRepository.findAllByInstructorId(instructor.getId());
-    }
-
-    @GetMapping("/getAvailable")
-    public Iterable<Offering> getAvailableOfferings() {
-        return offeringRepository.findAllByInstructorIsNull();
-    }
-
-    @GetMapping("/getTaken")
-    public Iterable<Offering> getTakenOfferings() {
-        return offeringRepository.findAllByInstructorIsNotNull();
-    }
-
     @PostMapping("/add")
-    public Offering addOffering(@RequestBody Offering offering) throws InvalidActivityNameException, InvalidLocationException {
-        checkOffering(offering);
-        return offeringRepository.save(offering);
+    public Offering addOffering(@RequestBody Long lessonId, @RequestParam Long instructorId) throws InvalidLessonException, UserNotFoundException {
+        Lesson lesson = lessonRepository.findById(lessonId).orElse(null);
+        if (lesson == null) {
+            throw new InvalidLessonException(lessonId);
+        }
+        Instructor instructor = instructorRepository.findById(instructorId).orElse(null);
+        if (instructor == null) {
+            throw new UserNotFoundException(instructorId);
+        }
+        return offeringRepository.save(new Offering(instructor, lesson));
     }
 
     @PatchMapping("/update")
@@ -83,9 +51,12 @@ public class OfferingController {
     }
 
     @PatchMapping("/take")
-    public Offering takeOffering(@RequestParam Long id) throws InvalidOfferingException {
-        Instructor instructor = instructorRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        Offering offering = offeringRepository.findById(id).orElse(null);
+    public Offering takeOffering(@RequestParam Long offeringId, @RequestParam Long instructorId) throws InvalidOfferingException, UserNotFoundException {
+        Instructor instructor = instructorRepository.findById(instructorId).orElse(null);
+        if (instructor == null) {
+            throw new UserNotFoundException(instructorId);
+        }
+        Offering offering = offeringRepository.findById(offeringId).orElse(null);
         if (offering == null) {
             throw new InvalidOfferingException();
         }
