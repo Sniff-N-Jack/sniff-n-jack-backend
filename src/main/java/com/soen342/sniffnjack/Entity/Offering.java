@@ -13,6 +13,7 @@ import org.hibernate.annotations.Formula;
 @Getter
 @NoArgsConstructor
 public class Offering {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,9 +27,8 @@ public class Offering {
     @Setter
     private Instructor instructor;
 
-    @NonNull
-    @OneToOne(targetEntity = Offering.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "lesson_id", referencedColumnName = "id")
+    @OneToOne(targetEntity = Lesson.class, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "lesson_id", referencedColumnName = "id", unique = true)
     @Setter
     private Lesson lesson;
 
@@ -46,3 +46,4 @@ public class Offering {
         return (new OfferingDTO(this)).toString();
     }
 }
+

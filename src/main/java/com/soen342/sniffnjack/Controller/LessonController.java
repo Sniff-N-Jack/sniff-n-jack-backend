@@ -46,16 +46,32 @@ public class LessonController {
         return lessonRepository.findById(id).orElse(null);
     }
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public Lesson addLesson(@RequestBody Lesson lesson) throws InvalidActivityNameException, InvalidLocationException {
-        checkLesson(lesson);
-        lesson.setActivity(activityRepository.findByName(lesson.getActivity().getName()));
-        lesson.setLocation(locationRepository.findById(lesson.getLocation().getId()).orElseThrow());
+        if (lesson.getActivity() == null || lesson.getActivity().getId() == null) {
+            throw new InvalidActivityNameException("Activity is required and must have a valid ID");
+        }
+        if (lesson.getLocation() == null || lesson.getLocation().getId() == null) {
+            throw new InvalidLocationException();
+        }
+
+        lesson.setActivity(activityRepository.findById(lesson.getActivity().getId())
+            .orElseThrow(() -> new InvalidActivityNameException("Invalid activity ID")));
+    
+        lesson.setLocation(locationRepository.findById(lesson.getLocation().getId())
+            .orElseThrow(() -> new InvalidLocationException()));
+    
         return lessonRepository.save(lesson);
     }
+    
 
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public void deleteLesson(@RequestParam Long id) {
         lessonRepository.deleteById(id);
+    }
+
+    @PatchMapping("/update")
+    public Lesson updateLesson(@RequestBody Lesson lesson) throws InvalidActivityNameException, InvalidLocationException {
+        return lessonRepository.save(lesson);
     }
 }
