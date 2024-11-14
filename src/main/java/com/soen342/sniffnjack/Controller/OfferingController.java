@@ -47,7 +47,7 @@ public class OfferingController {
 
     @PostMapping("/add")
     public Offering addOffering(@RequestParam Long lessonId, @RequestParam Long instructorId)
-            throws InvalidLessonException, UserNotFoundException {
+            throws InvalidLessonException, UserNotFoundException, InvalidCityException {
 
 
         Lesson lesson = lessonRepository.findById(lessonId).orElse(null);
@@ -61,14 +61,17 @@ public class OfferingController {
             throw new UserNotFoundException(instructorId); // Handle if the instructor is not found
         }
 
+        assert instructor.getAvailabilities() != null;
+        if (!instructor.getAvailabilities().contains(lesson.getLocation().getCity())) {
+            throw new InvalidCityException(lesson.getLocation().getCity().getName());
+        }
 
         Offering offering = new Offering(instructor, lesson);
         return offeringRepository.save(offering);
     }
 
     @PatchMapping("/update")
-    public Offering updateOffering(@RequestBody Offering offering)
-            throws InvalidActivityNameException, InvalidLocationException {
+    public Offering updateOffering(@RequestBody Offering offering) {
         return offeringRepository.save(offering);
     }
 

@@ -61,6 +61,14 @@ public class Lesson {
         return totalSpots == 1;
     }
 
+    public boolean isOverlapping(Lesson other) {
+        return this.dayOfWeek == other.dayOfWeek &&
+                ((this.startTime.isAfter(other.startTime) && this.startTime.isBefore(other.endTime)) ||
+                        (this.endTime.isAfter(other.startTime) && this.endTime.isBefore(other.endTime)) ||
+                        (this.startTime.isBefore(other.startTime) && this.endTime.isAfter(other.endTime)) ||
+                        this.startTime.equals(other.startTime) || this.endTime.equals(other.endTime));
+    }
+
     public Lesson (@Min(1) int totalSpots, @NonNull LocalDate startDate, @NonNull LocalDate endDate, @NonNull LocalTime startTime, @NonNull LocalTime endTime, @NonNull DayOfWeek dayOfWeek, @NonNull Location location, @NonNull Activity activity) {
         this.totalSpots = totalSpots;
         this.startDate = startDate;
