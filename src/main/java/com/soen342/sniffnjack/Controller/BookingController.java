@@ -53,17 +53,6 @@ public class BookingController {
             throw new UserNotFoundException(clientId);
         }
 
-        // Check if client is a minor
-        if (client.isMinor()) {
-            Client loggedInClient = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-            if (client == loggedInClient) {
-                throw new BookingRequiresParentException();
-            }
-            if (loggedInClient != client.getParent()) {
-                throw new BookingForOtherUserException();
-            }
-        }
-
         Offering offering = offeringRepository.findById(offeringId).orElse(null);
         if (offering == null) {
             throw new InvalidOfferingException();
