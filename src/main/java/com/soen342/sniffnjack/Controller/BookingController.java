@@ -89,7 +89,14 @@ public class BookingController {
     }
 
     @DeleteMapping("/delete")
-    public void deleteBooking(@RequestParam Long id) {
-        bookingRepository.deleteById(id);
+    public void deleteBooking(@RequestParam Long id) throws CustomBadRequestException {
+        if (!bookingRepository.existsById(id)) {
+            throw new CustomBadRequestException("Invalid booking ID");
+        }
+        try {
+            bookingRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new CustomBadRequestException("Booking is referenced by other entities");
+        }
     }
 }

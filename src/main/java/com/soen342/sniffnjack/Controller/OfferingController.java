@@ -91,13 +91,14 @@ public class OfferingController {
     }
 
     @DeleteMapping("/delete")
-    public void deleteOffering(@RequestParam Long id) {
-        
-        Offering offering = offeringRepository.findById(id).orElse(null);
-        
-        if (offering != null) {
-            
-            offeringRepository.delete(offering);
+    public void deleteOffering(@RequestParam Long id) throws InvalidOfferingException, CustomBadRequestException{
+        if (!offeringRepository.existsById(id)) {
+            throw new InvalidOfferingException();
+        }
+        try {
+            offeringRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new CustomBadRequestException("Offering is referenced by other entities");
         }
     }
     
