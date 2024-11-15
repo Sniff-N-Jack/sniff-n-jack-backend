@@ -4,6 +4,7 @@ import com.soen342.sniffnjack.Entity.Activity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Transactional

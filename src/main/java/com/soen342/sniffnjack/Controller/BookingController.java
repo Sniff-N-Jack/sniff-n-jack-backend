@@ -46,22 +46,11 @@ public class BookingController {
     }
 
     @PostMapping("/add")
-    public Booking addBooking(@RequestParam Long offeringId, @RequestParam Long clientID) throws
-            InvalidOfferingException, UserNotFoundException, OfferingFullException, ClientAlreadyBookedOfferingException, BookingRequiresParentException, BookingForOtherUserException {
-        Client client = clientRepository.findById(clientID).orElse(null);
+    public Booking addBooking(@RequestParam Long offeringId, @RequestParam Long clientId) throws
+            InvalidOfferingException, UserNotFoundException, OfferingFullException, ClientAlreadyBookedOfferingException, BookingRequiresParentException, BookingForOtherUserException, OverlappingLessonsException {
+        Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
-            throw new UserNotFoundException(clientID);
-        }
-
-        // Check if client is a minor
-        if (client.isMinor()) {
-            Client loggedInClient = clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-            if (client == loggedInClient) {
-                throw new BookingRequiresParentException();
-            }
-            if (loggedInClient != client.getParent()) {
-                throw new BookingForOtherUserException();
-            }
+            throw new UserNotFoundException(clientId);
         }
 
         Offering offering = offeringRepository.findById(offeringId).orElse(null);
@@ -75,8 +64,13 @@ public class BookingController {
         }
 
         // Check if client has already booked this offering
-        if (bookingRepository.findAllByClientId(clientID).stream().anyMatch(booking -> booking.getOffering().getId().equals(offeringId))) {
+        if (bookingRepository.findAllByClientId(clientId).stream().anyMatch(booking -> booking.getOffering().getId().equals(offeringId))) {
             throw new ClientAlreadyBookedOfferingException();
+        }
+
+        // Check if client already has a booking at this time
+        if (bookingRepository.findAllByClientId(clientId).stream().anyMatch(booking -> booking.getOffering().getLesson().isOverlapping(offering.getLesson()))) {
+            throw new OverlappingLessonsException();
         }
 
         Booking booking = new Booking(offering, client);
@@ -84,7 +78,14 @@ public class BookingController {
     }
 
     @DeleteMapping("/delete")
-    public void deleteBooking(@RequestParam Long id) {
-        bookingRepository.deleteById(id);
+    public void deleteBooking(@RequestParam Long id) throws CustomBadRequestException {
+        if (!bookingRepository.existsById(id)) {
+            throw new CustomBadRequestException("Invalid booking ID");
+        }
+        try {
+            bookingRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new CustomBadRequestException("Booking is referenced by other entities");
+        }
     }
 }

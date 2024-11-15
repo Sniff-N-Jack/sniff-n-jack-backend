@@ -2,12 +2,14 @@ package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Entity.Activity;
 import com.soen342.sniffnjack.Exceptions.ActivityAlreadyExistsException;
+import com.soen342.sniffnjack.Exceptions.CustomBadRequestException;
 import com.soen342.sniffnjack.Exceptions.InvalidActivityNameException;
 import com.soen342.sniffnjack.Repository.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,17 +40,25 @@ public class ActivityController {
     }
 
     @DeleteMapping("/delete")
-    public void deleteActivity(@RequestParam String name) throws InvalidActivityNameException {
+    public void deleteActivity(@RequestParam String name) throws InvalidActivityNameException, CustomBadRequestException {
         if (!activityRepository.existsByName(name)) {
             throw new InvalidActivityNameException(name);
         }
-        activityRepository.deleteByName(name);
+        try {
+            activityRepository.deleteByName(name);
+        } catch (Exception e) {
+            throw new CustomBadRequestException("Activity is referenced by other entities");
+        }
     }
 
     @DeleteMapping(value = "/deleteMultiple")
     public void deleteMultipleActivities(@RequestParam List<String> names) throws Exception {
         List<Activity> activities = getActivityList(names, false);
-        activityRepository.deleteAll(activities);
+        try {
+            activityRepository.deleteAll(activities);
+        } catch (Exception e) {
+            throw new CustomBadRequestException("Some activities could not be deleted because they are referenced by other entities");
+        }
     }
 
     @PatchMapping("/update")

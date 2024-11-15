@@ -8,4 +8,8 @@ public class InvalidLocationException extends Exception {
     public InvalidLocationException() {
         super("Location does not exist");
     }
+
+    public InvalidLocationException(String location) {
+        super("Location " + location + " is not part of the instructor's list of locations");
+    }
 }

@@ -2,6 +2,7 @@ package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Entity.City;
 import com.soen342.sniffnjack.Exceptions.CityAlreadyExistsException;
+import com.soen342.sniffnjack.Exceptions.CustomBadRequestException;
 import com.soen342.sniffnjack.Exceptions.InvalidCityNameException;
 import com.soen342.sniffnjack.Repository.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,11 +48,15 @@ public class CityController {
     }
 
     @DeleteMapping("/delete")
-    public void deleteCity(@RequestParam String name) throws InvalidCityNameException {
+    public void deleteCity(@RequestParam String name) throws InvalidCityNameException, CustomBadRequestException {
         if (!cityRepository.existsByName(name)) {
             throw new InvalidCityNameException(name);
         }
-        cityRepository.deleteByName(name);
+        try {
+            cityRepository.deleteByName(name);
+        } catch (Exception e) {
+            throw new CustomBadRequestException("City is referenced by other entities");
+        }
     }
 
     @DeleteMapping(value = "/deleteMultiple")

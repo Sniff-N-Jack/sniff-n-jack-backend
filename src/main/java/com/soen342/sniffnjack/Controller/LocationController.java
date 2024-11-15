@@ -2,12 +2,15 @@ package com.soen342.sniffnjack.Controller;
 
 import com.soen342.sniffnjack.Entity.City;
 import com.soen342.sniffnjack.Entity.Location;
+import com.soen342.sniffnjack.Exceptions.CustomBadRequestException;
 import com.soen342.sniffnjack.Exceptions.InvalidCityNameException;
 import com.soen342.sniffnjack.Exceptions.InvalidLocationException;
 import com.soen342.sniffnjack.Repository.CityRepository;
 import com.soen342.sniffnjack.Repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @RequestMapping("/locations")
@@ -34,11 +37,15 @@ public class LocationController {
     }
 
     @DeleteMapping("/delete")
-    public void deleteLocation(@RequestParam Long id) throws InvalidLocationException {
+    public void deleteLocation(@RequestParam Long id) throws InvalidLocationException, CustomBadRequestException {
         if (!locationRepository.existsById(id)) {
             throw new InvalidLocationException();
         }
-        locationRepository.deleteById(id);
+        try {
+            locationRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new CustomBadRequestException("Location is referenced by other entities");
+        }
     }
 
     @PatchMapping("/update")
