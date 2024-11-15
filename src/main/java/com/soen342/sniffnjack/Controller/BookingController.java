@@ -46,11 +46,11 @@ public class BookingController {
     }
 
     @PostMapping("/add")
-    public Booking addBooking(@RequestParam Long offeringId, @RequestParam Long clientID) throws
+    public Booking addBooking(@RequestParam Long offeringId, @RequestParam Long clientId) throws
             InvalidOfferingException, UserNotFoundException, OfferingFullException, ClientAlreadyBookedOfferingException, BookingRequiresParentException, BookingForOtherUserException, OverlappingLessonsException {
-        Client client = clientRepository.findById(clientID).orElse(null);
+        Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
-            throw new UserNotFoundException(clientID);
+            throw new UserNotFoundException(clientId);
         }
 
         // Check if client is a minor
@@ -75,12 +75,12 @@ public class BookingController {
         }
 
         // Check if client has already booked this offering
-        if (bookingRepository.findAllByClientId(clientID).stream().anyMatch(booking -> booking.getOffering().getId().equals(offeringId))) {
+        if (bookingRepository.findAllByClientId(clientId).stream().anyMatch(booking -> booking.getOffering().getId().equals(offeringId))) {
             throw new ClientAlreadyBookedOfferingException();
         }
 
         // Check if client already has a booking at this time
-        if (bookingRepository.findAllByClientId(clientID).stream().anyMatch(booking -> booking.getOffering().getLesson().isOverlapping(offering.getLesson()))) {
+        if (bookingRepository.findAllByClientId(clientId).stream().anyMatch(booking -> booking.getOffering().getLesson().isOverlapping(offering.getLesson()))) {
             throw new OverlappingLessonsException();
         }
 
