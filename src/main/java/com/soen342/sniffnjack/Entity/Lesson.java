@@ -61,7 +61,18 @@ public class Lesson {
         return totalSpots == 1;
     }
 
-    public boolean isOverlapping(Lesson other) {
+    public boolean isOverlapping(Lesson other, boolean ignoreLocation) {
+        if (ignoreLocation) {
+            return this.dayOfWeek == other.dayOfWeek &&
+                    ((this.startTime.isAfter(other.startTime) && this.startTime.isBefore(other.endTime)) ||
+                            (this.endTime.isAfter(other.startTime) && this.endTime.isBefore(other.endTime)) ||
+                            (this.startTime.isBefore(other.startTime) && this.endTime.isAfter(other.endTime)) ||
+                            this.startTime.equals(other.startTime) || this.endTime.equals(other.endTime)) &&
+                    ((this.startDate.isAfter(other.startDate) && this.startDate.isBefore(other.endDate)) ||
+                            (this.endDate.isAfter(other.startDate) && this.endDate.isBefore(other.endDate)) ||
+                            (this.startDate.isBefore(other.startDate) && this.endDate.isAfter(other.endDate)) ||
+                            this.startDate.equals(other.startDate) || this.endDate.equals(other.endDate));
+        }
         return this.dayOfWeek == other.dayOfWeek &&
                 this.location.equals(other.location) &&
                 ((this.startTime.isAfter(other.startTime) && this.startTime.isBefore(other.endTime)) ||

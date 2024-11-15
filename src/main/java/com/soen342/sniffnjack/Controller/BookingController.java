@@ -69,7 +69,7 @@ public class BookingController {
         }
 
         // Check if client already has a booking at this time
-        if (bookingRepository.findAllByClientId(clientId).stream().anyMatch(booking -> booking.getOffering().getLesson().isOverlapping(offering.getLesson()))) {
+        if (bookingRepository.findAllByClientId(clientId).stream().anyMatch(booking -> booking.getOffering().getLesson().isOverlapping(offering.getLesson(), true))) {
             throw new OverlappingLessonsException();
         }
 

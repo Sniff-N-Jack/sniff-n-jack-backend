@@ -42,7 +42,7 @@ public class LessonController {
 
         }
 
-        if (lessonRepository.findAll().stream().anyMatch(l -> l.isOverlapping(lesson) && !l.getId().equals(lesson.getId()))) {
+        if (lessonRepository.findAll().stream().anyMatch(l -> l.isOverlapping(lesson, false) && !l.getId().equals(lesson.getId()))) {
             throw new OverlappingLessonsException();
         }
 
