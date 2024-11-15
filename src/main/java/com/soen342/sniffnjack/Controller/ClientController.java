@@ -61,7 +61,6 @@ public class ClientController {
             throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setRole(roleRepository.findByName("CLIENT"));
-        user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
         if (user.getParent() != null) {
             User parent = userGetter.getUserByEmail(user.getParent().getEmail());
             checkParent(parent.getEmail(), parent.getRole().getName());

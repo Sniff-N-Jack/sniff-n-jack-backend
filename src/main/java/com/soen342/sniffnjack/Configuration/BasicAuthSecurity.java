@@ -8,8 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -20,29 +18,11 @@ public class BasicAuthSecurity {
         return new MyUserDetailsService();
     }
 
-    @Bean
-    public static PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder() {
-//            @Override
-//            public boolean matches(CharSequence given, String stored) {
-//                String decrypted;
-//                try {
-//                    byte[] bytes = decrypt(System.getenv("AES_KEY").getBytes(), KU_AP_REQ_AUTHENTICATOR, System.getenv("AES_IV").getBytes(), given.toString().getBytes(), 0, given.length());
-//                    decrypted = new String(bytes);
-//                } catch (Exception e) {
-//                    System.out.println("Error decrypting password");
-//                    return false;
-//                }
-//                return super.matches(decrypted, stored);
-//            }
-//        };
-        return new BCryptPasswordEncoder(); // TODO: Decrypt password
-    }
+
 
     @Bean
     public CustomAuthenticationProvider customAuthenticationProvider() {
         CustomAuthenticationProvider customAuthenticationProvider = new CustomAuthenticationProvider();
-        customAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         customAuthenticationProvider.setUserDetailsService(myUserDetailsService());
         return customAuthenticationProvider;
     }
