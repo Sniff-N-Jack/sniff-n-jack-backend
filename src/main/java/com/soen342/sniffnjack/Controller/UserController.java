@@ -7,7 +7,7 @@ import com.soen342.sniffnjack.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import static com.soen342.sniffnjack.Configuration.BasicAuthSecurity.passwordEncoder;
+
 
 @RestController
 @RequestMapping("/users")

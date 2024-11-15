@@ -9,7 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import static com.soen342.sniffnjack.Configuration.BasicAuthSecurity.passwordEncoder;
+
 
 @Component
 public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
@@ -19,9 +19,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
         final String password = authentication.getCredentials().toString();
         final UserDetails user = getUserDetailsService().loadUserByUsername(name);
 
-        if (!passwordEncoder().matches(password, user.getPassword())) {
-            throw new WrongPasswordException();
-        }
+
 
         return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
     }

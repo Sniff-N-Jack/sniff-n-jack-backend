@@ -36,7 +36,6 @@ public class AdminController {
             throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setRole(roleRepository.findByName("ADMIN"));
-        user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
         return adminRepository.save(user);
     }
 

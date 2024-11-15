@@ -60,7 +60,6 @@ public class InstructorController {
             throw new UserAlreadyExistsException(user.getEmail());
         }
         user.setRole(roleRepository.findByName("INSTRUCTOR"));
-        user.setPassword(BasicAuthSecurity.passwordEncoder().encode(user.getPassword()));
         if (user.getSpecializations() != null) {
             user.setSpecializations(
                     getActivityList(user.getSpecializations().stream().map(Activity::getName).collect(Collectors.toCollection(ArrayList::new))));

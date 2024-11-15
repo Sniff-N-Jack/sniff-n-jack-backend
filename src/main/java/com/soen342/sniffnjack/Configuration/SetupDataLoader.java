@@ -7,7 +7,6 @@ import com.soen342.sniffnjack.Repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +26,6 @@ public class SetupDataLoader implements ApplicationListener <ContextRefreshedEve
     @Autowired
     private PrivilegeRepository privilegeRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -53,7 +50,7 @@ public class SetupDataLoader implements ApplicationListener <ContextRefreshedEve
             Admin user = new Admin();
             user.setFirstName("Admin-First");
             user.setLastName("Admin-Last");
-            user.setPassword(passwordEncoder.encode("admin123"));
+            user.setPassword(("admin123"));
             user.setEmail(email);
             user.setRole(adminRole);
             adminRepository.save(user);
